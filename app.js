@@ -123,9 +123,9 @@
   }
   $('#dateNext').addEventListener('click',()=>{dateOffset=Math.min(dateOffset+7,56);booking.date=null;booking.time=null;renderDates();$('#slotArea').innerHTML='<p class="empty-note">Selecione uma data para consultar os horários.</p>';updateNext()});
   $('#datePrev').addEventListener('click',()=>{dateOffset=Math.max(0,dateOffset-7);booking.date=null;booking.time=null;renderDates();$('#slotArea').innerHTML='<p class="empty-note">Selecione uma data para consultar os horários.</p>';updateNext()});
-  async function loadAvailability(){
+  async function loadAvailability(silent=false){
     const seq=++fetching;if(!booking.date)return;
-    $('#slotArea').innerHTML='<p class="empty-note">Consultando horários...</p>';
+    if(!silent)$('#slotArea').innerHTML='<p class="empty-note">Consultando horários...</p>';
     $('#availabilityMeta').textContent=formattedDate(booking.date);
     try{
       const [result,googleBusy]=await Promise.all([
@@ -137,16 +137,44 @@
       const slots=(result||[])
         .filter(item=>!overlapsGoogleBusy(booking.date,item.hora,duration,googleBusy))
         .map(item=>({time:item.hora,vipOnly:Boolean(item.vip_exclusivo)}));
-      if(!slots.length){$('#slotArea').innerHTML='<p class="empty-note">Sem horários disponíveis. Experimente outra data.</p>';booking.time=null;updateNext();return;}
+      const slotArea=$('#slotArea');
+      const signature=JSON.stringify(slots.map(s=>[s.time,s.vipOnly]));
+      if(booking.time&&!slots.some(s=>s.time===booking.time)){
+        booking.time=null;
+        updateNext();
+      }
+      // Na atualização silenciosa, só redesenha quando os horários realmente mudam.
+      if(silent&&slotArea.dataset.slotsSignature===signature)return;
+      slotArea.dataset.slotsSignature=signature;
+      if(!slots.length){slotArea.innerHTML='<p class="empty-note">Sem horários disponíveis. Experimente outra data.</p>';booking.time=null;updateNext();return;}
       let html='';
       for(const [title,items] of [['MANHÃ',slots.filter(s=>s.time<'12:00')],['TARDE',slots.filter(s=>s.time>='12:00')]]){
         if(!items.length)continue;
         html+=`<div class="period-label">${title}</div><div class="time-buttons">${items.map(s=>`<button type="button" class="time-slot ${booking.time===s.time?'selected':''}" data-time="${esc(s.time)}" aria-pressed="${booking.time===s.time}">${esc(s.time)}${s.vipOnly?'<small class="vip-slot-tag">VIP</small>':''}</button>`).join('')}</div>`;
       }
-      $('#slotArea').innerHTML=html;
+      slotArea.innerHTML=html;
       $$('.time-slot').forEach(el=>el.addEventListener('click',()=>{booking.time=el.dataset.time;$$('.time-slot').forEach(e=>{e.classList.toggle('selected',e===el);e.setAttribute('aria-pressed',String(e===el))});updateNext()}));
-    }catch(e){if(seq===fetching)$('#slotArea').innerHTML=`<p class="empty-note">${esc(e.message)}. Tente outra data ou recarregue a página.</p>`;}
+    }catch(e){
+      // Uma falha transitória durante o polling não apaga os horários já exibidos.
+      if(!silent&&seq===fetching)$('#slotArea').innerHTML=`<p class="empty-note">${esc(e.message)}. Tente outra data ou recarregue a página.</p>`;
+    }
   }
+
+  // Mantém a disponibilidade atualizada enquanto a etapa de escolha de horário
+  // estiver aberta. Também consulta novamente quando a pessoa retorna à aba.
+  let autoRefreshInFlight=false,lastAutoRefreshAt=0;
+  async function autoRefreshAvailability(){
+    if(document.visibilityState!=='visible'||step!==3||!booking.date||!booking.professional_id||!booking.service_id)return;
+    if(autoRefreshInFlight||Date.now()-lastAutoRefreshAt<5000)return;
+    autoRefreshInFlight=true;
+    lastAutoRefreshAt=Date.now();
+    try{await loadAvailability(true);}finally{autoRefreshInFlight=false;}
+  }
+  window.setInterval(autoRefreshAvailability,30000);
+  window.addEventListener('focus',autoRefreshAvailability);
+  document.addEventListener('visibilitychange',()=>{
+    if(document.visibilityState==='visible')autoRefreshAvailability();
+  });
   function setVipMessage(text,type=''){
     const el=$('#vipMessage');if(!el)return;el.textContent=text||'';el.classList.toggle('success',type==='success');el.classList.toggle('error',type==='error');
   }
