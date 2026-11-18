@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#17110d"><title>Redefinir senha | Unhas da Simone</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .recovery-wrap{width:min(520px,calc(100% - 28px));margin:70px auto}.recovery-card{background:#251b14;border:1px solid #6a4730;padding:28px;color:#ded0c2}
+    .recovery-card h1{font:52px/.92 var(--display);margin:12px 0}.recovery-card p{font-size:12px;color:#bda996;line-height:1.7}
+    .recovery-card label{display:block;color:#dfcdb9;font-size:10px;font-weight:800;margin:14px 0 6px}
+    .recovery-card input{width:100%;background:#17110d;border:1px solid #664b35;padding:13px;color:white;font:12px var(--font)}
+    .recovery-card button{width:100%;margin-top:18px;padding:14px;border:1px solid var(--accent);background:var(--accent);color:#17110d;font-size:10px;font-weight:800;letter-spacing:1px}
+    #recoveryMessage{min-height:20px;color:#e5b27f}.error{color:#ffad9d!important}
+  </style>
+</head>
+<body>
+  <header class="topbar"><div class="wrap topbar-inner"><a href="index.html" class="brand"><img src="assets/logo.png" alt="Unhas da Simone" width="56" height="56"><span>UNHAS DA SIMONE <small>DESDE 2019</small></span></a></div></header>
+  <main class="recovery-wrap"><section class="recovery-card">
+    <p class="micro">ÁREA ADMINISTRATIVA</p><h1>NOVA <em>SENHA.</em></h1>
+    <p>Defina uma nova senha para acessar o painel administrativo.</p>
+    <form id="recoveryForm" hidden>
+      <label for="newPassword">NOVA SENHA</label><input id="newPassword" type="password" minlength="8" autocomplete="new-password" required placeholder="Pelo menos 8 caracteres">
+      <label for="confirmPassword">CONFIRMAR NOVA SENHA</label><input id="confirmPassword" type="password" minlength="8" autocomplete="new-password" required placeholder="Digite novamente">
+      <button type="submit">SALVAR NOVA SENHA ↗</button>
+    </form>
+    <p id="recoveryMessage" role="status">Validando link de recuperação...</p>
+    <p><a href="admin.html" style="color:#e5b27f;text-decoration:underline">Voltar ao painel</a></p>
+  </section></main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+  (()=>{
+    const URL='https://iszptjpzqicpmzkmogai.supabase.co';
+    const KEY='sb_publishable_-m2Hd6qEp76A2LMQwnJrPw_yAH44AVM';
+    const sb=window.supabase.createClient(URL,KEY);
+    const form=document.getElementById('recoveryForm'),msg=document.getElementById('recoveryMessage');
+    let ready=false;
+    const setMessage=(text,error=false)=>{msg.textContent=text;msg.classList.toggle('error',error);};
+    function activate(){ready=true;form.hidden=false;setMessage('Link válido. Escolha sua nova senha.');}
+    sb.auth.onAuthStateChange((event,session)=>{
+      if(event==='PASSWORD_RECOVERY'&&session)activate();
+      if(event==='SIGNED_IN'&&session&&location.hash.includes('type=recovery'))activate();
+    });
+    sb.auth.getSession().then(({data,error})=>{
+      if(error){setMessage('Não foi possível validar o link. Solicite outro pelo painel.',true);return;}
+      if(data.session&&location.hash.includes('type=recovery'))activate();
+      else if(!ready)setMessage('Se o link expirou ou já foi usado, volte ao painel e solicite uma nova recuperação.',true);
+    });
+    form.addEventListener('submit',async e=>{
+      e.preventDefault();
+      const password=document.getElementById('newPassword').value;
+      const confirm=document.getElementById('confirmPassword').value;
+      if(password.length<8){setMessage('A senha precisa ter pelo menos 8 caracteres.',true);return;}
+      if(password!==confirm){setMessage('As senhas não coincidem.',true);return;}
+      const {error}=await sb.auth.updateUser({password});
+      if(error){setMessage(error.message,true);return;}
+      await sb.auth.signOut();form.hidden=true;setMessage('Senha alterada com sucesso. Agora volte ao painel e entre com a nova senha.');
+    });
+  })();
+  </script>
+</body>
+</html>

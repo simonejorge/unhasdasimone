@@ -1,0 +1,1785 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#ebc4b0">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Unhas da Simone">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Painel administrativo | Unhas da Simone</title>
+  <link rel="manifest" href="./assets/manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="192x192" href="./assets/app-icon-192.png">
+  <link rel="apple-touch-icon" href="./assets/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=unhas-simone-1">
+  <style>
+    .admin-wrap{width:min(1280px,calc(100% - 36px));margin:0 auto}
+    .admin-page{min-height:82vh;padding:48px 0 80px;background:radial-gradient(circle at 100% 0%,#48301f 0%,transparent 46%),#16110d}
+    .admin-head{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:25px}
+    .admin-head h1{font:clamp(48px,6vw,68px)/.9 var(--display);margin:10px 0}
+    .admin-head p{color:#b9aa9d;font-size:12px}
+    .admin-card{background:#251b14;border:1px solid #6a4730;padding:22px;margin:18px 0;color:#ded0c2}
+    .admin-card h2{font:34px var(--display);margin:0 0 10px}
+    .admin-card p{font-size:12px;color:#bda996;line-height:1.7}
+    .admin-login{max-width:480px;margin:45px auto}
+    .admin-form label,.admin-card label{display:block;color:#dfcdb9;font-size:10px;font-weight:800;letter-spacing:.7px;margin:12px 0 6px}
+    .admin-form input,.admin-card input,.admin-card select,.admin-card textarea,.admin-modal input,.admin-modal select{width:100%;background:#17110d;border:1px solid #664b35;padding:12px;color:white;font:12px var(--font);border-radius:0;min-height:43px}
+    .admin-form input:focus,.admin-card input:focus,.admin-card select:focus,.admin-card textarea:focus{outline:1px solid var(--accent)}
+    .admin-btn{padding:12px 15px;border:1px solid #8a603e;background:#382619;color:#e7c5a4;font-size:10px;font-weight:800;letter-spacing:.6px}
+    .admin-btn:hover{background:#684329}
+    .admin-btn.primary{background:var(--accent);color:#160f0a;border-color:var(--accent)}
+    .admin-btn.primary:hover{background:var(--accent2)}
+    .admin-btn.danger{border-color:#8b4c3c;color:#f0b6a3}
+    .admin-btn.small{padding:8px 10px;font-size:9px}
+    .admin-actions{display:flex;gap:8px;flex-wrap:wrap}
+    .admin-tabs{display:flex;gap:7px;flex-wrap:wrap;margin:25px 0}
+    .admin-tabs button{background:#2d2119;border:1px solid #644a32;color:#eedbc8;font-size:10px;font-weight:800;letter-spacing:1px;padding:14px 18px}
+    .admin-tabs button.active{color:#160f0a;background:var(--accent);border-color:var(--accent)}
+    .admin-section{display:none}.admin-section.active{display:block}
+    .admin-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+    .admin-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .admin-tools{display:flex;gap:10px;align-items:end;flex-wrap:wrap;margin:15px 0}
+    .admin-tools>div{min-width:150px;flex:1}
+    .admin-table-wrap{overflow:auto}
+    .admin-table{width:100%;border-collapse:collapse;font-size:11px;min-width:760px}
+    .admin-table th{text-align:left;color:#b88e69;letter-spacing:.7px;padding:12px 9px;background:#17110d;white-space:nowrap}
+    .admin-table td{border-top:1px solid #4c3929;padding:12px 9px;color:#e7dbce;vertical-align:middle}
+    .admin-table td small{display:block;color:#ad9b8a;margin-top:4px}
+    .admin-chip{display:inline-block;border:1px solid #856243;padding:5px 8px;color:#dcb185;font-size:9px;white-space:nowrap}
+    .admin-chip.cancelado{opacity:.55}.admin-chip.concluido{border-color:#5c6e49;color:#b9c497}.admin-chip.ausente,.admin-chip.faltou{border-color:#9b5e4e;color:#e6a58e}
+    .admin-note{font-size:12px;color:#e4b783;min-height:20px;margin:14px 0}
+    .admin-note.error{color:#ffad9d}
+    .admin-stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:15px 0}
+    .admin-stat{background:#1a130f;border:1px solid #4a3526;padding:15px}
+    .admin-stat strong{display:block;font:34px var(--display);color:var(--accent2)}
+    .admin-stat span{font-size:9px;letter-spacing:1px;color:#b9a695}
+    .admin-service-row{display:grid;grid-template-columns:minmax(150px,2fr) 95px 115px 90px auto auto;gap:10px;align-items:end;padding:13px 0;border-bottom:1px solid #4b3628}
+    .admin-service-row label{margin-top:0}
+    .admin-check{display:flex!important;align-items:center;gap:8px}
+    .admin-check input{width:18px!important;min-height:18px!important;accent-color:var(--accent)}
+    .admin-hours-row{display:grid;grid-template-columns:110px 100px 1fr 1fr;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #4b3628}
+    .admin-hours-row>strong{font-size:11px}
+    .admin-list-item{display:flex;justify-content:space-between;gap:15px;align-items:center;padding:13px 0;border-bottom:1px solid #4b3628;font-size:11px}
+    .admin-modal{border:1px solid #8b6345;background:#211913;color:var(--light);width:min(520px,calc(100% - 28px));padding:25px}
+    .admin-modal::backdrop{background:#000b}
+    .admin-modal h2{font:34px var(--display);margin:0 0 10px}
+    .admin-modal form{display:grid;gap:8px}
+    .admin-modal menu{display:flex;justify-content:flex-end;gap:8px;padding:0;margin:15px 0 0}
+    .admin-top-actions{display:flex;gap:10px;align-items:center}
+    .admin-top-actions span{font-size:10px;color:#b9aa9d}
+    .admin-footer{border-top:1px solid #433025;padding:22px 0;color:#8f7c70;font-size:10px;display:flex;justify-content:space-between;gap:10px}
+    .admin-footer a{color:#d6a97e}
+    [hidden]{display:none!important}
+    @media(max-width:800px){.admin-grid{grid-template-columns:1fr}.admin-service-row{grid-template-columns:1fr 1fr}.admin-service-row>div:first-child{grid-column:1/-1}.admin-hours-row{grid-template-columns:85px 90px 1fr 1fr}.admin-head{align-items:flex-start;flex-direction:column}.admin-top-actions{width:100%;justify-content:space-between}}
+    @media(max-width:560px){.admin-wrap{width:calc(100% - 24px)}.admin-page{padding-top:30px}.admin-card{padding:16px}.admin-fields{grid-template-columns:1fr}.admin-stat-row{gap:7px}.admin-stat{padding:10px}.admin-stat strong{font-size:28px}.admin-stat span{font-size:8px}.admin-hours-row{grid-template-columns:1fr 1fr}.admin-hours-row>strong{grid-column:1/-1}.admin-tabs button{flex:1;padding:12px 8px;font-size:9px}.admin-footer{flex-direction:column}}
+
+    /* Painel mobile: navegação e controles confortáveis ao toque */
+    .admin-actions .admin-btn{min-height:44px}
+    .admin-table td[data-label]::before{content:none}
+    .admin-support{color:#d8c2ad}
+    .admin-support a{color:#e5b27f;text-decoration:underline;text-underline-offset:3px;font-weight:800}
+    @media(max-width:700px){
+      .wrap{width:calc(100% - 24px)}
+      .topbar{height:68px}
+      .topbar-inner{gap:8px}
+      .brand{gap:9px;min-width:0}
+      .brand img{width:42px;height:42px}
+      .brand>span{font-size:27px;white-space:nowrap}
+      .brand small{font-size:7px;letter-spacing:3.4px}
+      .admin-top-actions{width:auto;max-width:48%;gap:6px;justify-content:flex-end}
+      .admin-top-actions span{max-width:145px;overflow-wrap:anywhere;text-align:right;font-size:9px}
+      .admin-top-actions .admin-btn{padding:9px 10px;min-height:40px}
+      .admin-wrap{width:calc(100% - 24px)}
+      .admin-page{min-height:calc(100svh - 68px);padding:24px 0 40px}
+      .admin-head{display:flex;align-items:stretch;gap:14px;margin-bottom:18px}
+      .admin-head h1{font-size:clamp(39px,10vw,54px);line-height:.9}
+      .admin-head p{font-size:11px}
+      .admin-head>div:first-child{max-width:100%}
+      .admin-head .admin-actions{display:grid;grid-template-columns:1fr 1fr;width:100%;gap:8px}
+      .admin-head .admin-actions .admin-btn{width:100%;padding:11px 7px;font-size:9px;letter-spacing:.35px;min-height:46px}
+      .admin-stat-row{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:12px 0}
+      .admin-stat{padding:10px 8px;min-width:0}
+      .admin-stat strong{font-size:clamp(23px,6vw,30px)}
+      .admin-stat span{font-size:7px;line-height:1.35;letter-spacing:.45px}
+      .admin-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:18px 0}
+      .admin-tabs button{width:100%;min-height:46px;padding:10px 7px;font-size:9px;letter-spacing:.45px}
+      .admin-tabs button:last-child{grid-column:1/-1}
+      .admin-card{padding:14px;margin:12px 0}
+      .admin-card h2{font-size:29px}
+      .admin-card p{font-size:11px;line-height:1.6}
+      .admin-fields{grid-template-columns:1fr;gap:8px}
+      .admin-form input,.admin-card input,.admin-card select,.admin-card textarea,.admin-modal input,.admin-modal select{
+        min-height:46px;font-size:16px;padding:11px 12px;
+      }
+      .admin-card label,.admin-form label{font-size:9px;margin-top:10px}
+      .admin-btn{min-height:44px;padding:11px 12px;font-size:10px}
+      .admin-tools{display:grid;grid-template-columns:1fr;gap:8px;align-items:stretch}
+      .admin-tools>div{min-width:0;width:100%}
+      .admin-tools>button{width:100%}
+      .admin-table-wrap{overflow:visible}
+      .admin-table{display:block;width:100%;min-width:0;border-collapse:separate;border-spacing:0}
+      .admin-table thead{display:none}
+      .admin-table tbody{display:grid;gap:10px}
+      .admin-table tr{
+        display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 12px;
+        border:1px solid #4c3929;background:#1b140f;padding:7px 11px;min-width:0
+      }
+      .admin-table td{
+        display:flex;flex-direction:column;gap:4px;min-width:0;
+        border:0;padding:9px 0;font-size:11px;overflow-wrap:anywhere
+      }
+      .admin-table td[data-label]::before{
+        content:attr(data-label);display:block;color:#b88e69;font-size:8px;
+        font-weight:800;letter-spacing:.7px;margin-bottom:2px
+      }
+      .admin-table td:nth-child(2),.admin-table td:nth-child(6){grid-column:1/-1}
+      .admin-table td[colspan]{grid-column:1/-1;display:block;text-align:center;padding:15px 4px}
+      .admin-table td[colspan]::before{content:none}
+      .admin-table td small{font-size:9px;line-height:1.45;overflow-wrap:anywhere}
+      .admin-table .admin-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+      .admin-table .admin-actions .admin-btn{width:100%;min-height:38px;padding:8px 5px;font-size:8px}
+      .admin-service-row{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.admin-permissions{grid-template-columns:1fr}
+      .admin-service-row>div:first-child{grid-column:1/-1}
+      .admin-service-row>button{width:100%;min-height:42px}
+      .admin-hours-row{
+        grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;
+        border:1px solid #4b3628;padding:11px;margin:10px 0
+      }
+      .admin-hours-row>strong{grid-column:1/-1;font-size:12px;color:#e7c5a4}
+      .admin-hours-row .admin-check{grid-column:1/-1;margin:0}
+      .admin-hours-row input[type=time]{min-width:0}
+      .admin-list-item{align-items:flex-start;flex-direction:column;gap:8px}
+      .admin-modal{width:calc(100% - 20px);max-width:520px;max-height:90svh;overflow:auto;padding:17px}
+      .admin-modal h2{font-size:29px}
+      .admin-modal menu{display:grid;grid-template-columns:1fr 1fr}
+      .admin-modal menu button{min-height:44px;padding:10px 6px;font-size:9px}
+      .admin-footer{display:flex;flex-direction:column;align-items:center;text-align:center;gap:9px;padding:18px 0 calc(18px + env(safe-area-inset-bottom));font-size:10px}
+      .admin-login{margin:22px auto;padding:18px}
+      .admin-login h1{font-size:clamp(39px,10vw,50px)!important}
+    }
+    @media(max-width:380px){
+      .brand>span{font-size:23px}
+      .brand small{font-size:6px;letter-spacing:2.8px}
+      .admin-top-actions span{display:none}
+      .admin-stat{padding:8px 5px}
+      .admin-stat span{font-size:6.5px}
+      .admin-head .admin-actions .admin-btn{font-size:8px}
+      .admin-table tr{gap:0 8px;padding:6px 8px}
+    }
+
+
+    .admin-help{font-size:10px!important;color:#a99582!important;margin:9px 0 13px!important;line-height:1.7}
+    .admin-help code{color:#e2b17f;background:#17110d;border:1px solid #513a29;padding:2px 5px}
+    .wa-message-preview{margin-top:15px;padding:15px;background:#17110d;border:1px solid #5c412d}
+    .wa-message-preview>span{display:block;color:#c99a6d;font-size:9px;letter-spacing:1px;font-weight:800}
+    .wa-message-preview p{white-space:pre-wrap;min-height:70px;margin:10px 0 0;color:#f0e2d4;font-size:12px;line-height:1.7}
+    .vip-level-chip{display:inline-block;padding:5px 8px;border:1px solid #9b744d;background:#241a13;color:#e9c69f;font-size:9px;font-weight:900;letter-spacing:.6px;white-space:nowrap}
+    .vip-level-chip.level-prata{border-color:#8d9295;color:#d5d9dc}
+    .vip-level-chip.level-ouro{border-color:#c29a4d;color:#f0cf85}
+    .vip-level-chip.level-platina{border-color:#a7aeb7;color:#e4e8ee}
+    .vip-level-chip.level-black{border-color:#6e6257;color:#f0e6dc;background:#110d0a}
+    .admin-permissions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:12px 0}
+    .admin-permission{display:flex!important;align-items:flex-start;gap:9px;padding:10px;background:#1a130f;border:1px solid #4b3628;margin:0!important;font-size:10px!important;line-height:1.45}
+    .admin-permission input{width:17px!important;min-width:17px;min-height:17px!important;margin:0;accent-color:var(--accent)}
+    .admin-user-state{display:inline-block;padding:4px 7px;border:1px solid #70583f;color:#d9b38b;font-size:9px}
+    .admin-user-state.off{border-color:#8b4c3c;color:#f0b6a3}
+    .admin-danger-note{color:#f0b6a3!important;border-left:2px solid #a65b48;padding-left:10px}
+
+    /* UNHAS DA SIMONE — paleta rosé/pêssego, café e cobre */
+    :root{--ink:#3a1d16;--bg:#f7e8e1;--card:#fff8f4;--card2:#f4ded4;--line:#d9b9aa;--accent:#a85d3e;--accent2:#c98767;--light:#4b2a24;--muted:#80635b;--display:'Cormorant Garamond',Georgia,serif}
+    body{background:#f7e8e1;color:#4b2a24}
+    .topbar{background:#f2d9ce;border-bottom:1px solid #d6b2a2}
+    .brand>span{color:#421d14;font-family:var(--display);font-weight:700}
+    .brand small{color:#805447;letter-spacing:2px}
+    .admin-page{background:radial-gradient(circle at 100% 0%,#f1d5c8 0%,transparent 46%),#f7e8e1}
+    .admin-head h1,.admin-card h2,.admin-modal h2{font-family:var(--display);font-weight:700;color:#4b251e}
+    .admin-head p,.admin-card p{color:#80635b}
+    .admin-card{background:#fff9f6;border:1px solid #d8b4a4;color:#4b2a24;border-radius:14px;box-shadow:0 8px 22px #6e38200d}
+    .admin-form input,.admin-card input,.admin-card select,.admin-card textarea,.admin-modal input,.admin-modal select{background:#fffdfb!important;border:1px solid #d7b8aa!important;color:#4b2a24!important;border-radius:8px}
+    .admin-form label,.admin-card label{color:#71483d}
+    .admin-btn{background:#f2ded4;border:1px solid #c58b72;color:#713d2e;border-radius:8px}
+    .admin-btn:hover{background:#e8c5b5}
+    .admin-btn.primary{background:#a85d3e;color:#fff8f4;border-color:#a85d3e}
+    .admin-btn.primary:hover{background:#8e4b34}
+    .admin-btn.danger{border-color:#b66b60;color:#9b4138}
+    .admin-tabs button{background:#f2ded4;border:1px solid #d5b3a4;color:#70463b;border-radius:8px}
+    .admin-tabs button.active{background:#a85d3e;border-color:#a85d3e;color:#fff8f4}
+    .admin-table th{background:#f3e1d9;color:#8c4d37}
+    .admin-table td{border-color:#ead4ca;color:#4b2a24}
+    .admin-table td small{color:#896a60}
+    .admin-stat{background:#fffaf7;border:1px solid #dfc1b4;border-radius:10px}
+    .admin-stat strong{color:#a85d3e;font-family:var(--display)}
+    .admin-stat span{color:#80635b}
+    .admin-chip{border-color:#c48a70;color:#8c4d37;border-radius:20px}
+    .admin-note{color:#8c4d37}
+    .admin-note.error{color:#a33e32}
+    .admin-list-item{border-color:#ead4ca;color:#4b2a24}
+    .admin-modal{background:#fff9f6;border-color:#c58b72;color:#4b2a24;border-radius:14px}
+    .admin-modal::backdrop{background:#4b2a2480}
+    .admin-footer{border-color:#d8b4a4;color:#80635b}
+    .admin-footer a{color:#8c4d37}
+    .admin-user-state{color:#8c4d37}
+    .admin-user-state.off{color:#a33e32}
+    .admin-service-row{border-color:#ead4ca}
+    .admin-hours-row{border-color:#ead4ca}
+    .admin-hours-row>strong{color:#8c4d37}
+    .admin-help{color:#80635b}
+    .admin-permission{background:#fffdfb;border:1px solid #ead4ca;color:#4b2a24}
+    .admin-permission input{accent-color:#a85d3e}
+    .admin-danger-note{background:#f8e5df;color:#8b4038}
+    .admin-table .admin-actions{gap:5px}
+    .admin-card[style*="background:#fff4ef"]{background:#fff4ef!important}
+    @media(max-width:700px){.admin-page{background:#f7e8e1}.admin-card{border-radius:12px}}
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <a href="index.html" class="brand"><img src="assets/logo.png" alt="Unhas da Simone" width="66" height="66"><span>UNHAS DA<small>PAINEL ADMINISTRATIVO</small></span></a>
+      <div class="admin-top-actions"><span id="loggedEmail"></span><button id="logoutBtn" class="admin-btn" type="button" hidden>SAIR ↗</button></div>
+    </div>
+  </header>
+
+  <main class="admin-page">
+    <div class="admin-wrap">
+      <section id="loginArea" class="admin-card admin-login">
+        <p class="micro">ÁREA RESTRITA · UNHAS DA SIMONE</p>
+        <h1 style="font:48px/.92 var(--display);margin:12px 0">ENTRAR NO <em>PAINEL.</em></h1>
+        <p>Use seu e-mail e senha cadastrados pela administração.</p>
+        <form id="loginForm" class="admin-form">
+          <label for="email">E-MAIL</label><input id="email" type="email" autocomplete="username" required placeholder="seu@email.com">
+          <label for="password">SENHA</label><input id="password" type="password" autocomplete="current-password" required placeholder="Sua senha">
+          <button class="admin-btn primary" type="submit" style="width:100%;margin-top:16px">ENTRAR NO PAINEL ↗</button>
+        </form>
+        <p style="margin:13px 0 0;font-size:11px"><a href="#" id="forgotPasswordLink" style="color:#e5b27f;text-decoration:underline;text-underline-offset:3px">Esqueci minha senha</a></p>
+        <p id="loginMessage" class="admin-note" role="alert"></p>
+      </section>
+
+      <section id="panelArea" hidden>
+        <div class="admin-head">
+          <div><p class="micro">GESTÃO DA AGENDA</p><h1>CONTROLE DA <em>AGENDA.</em></h1><p>Reservas, horários e serviços em um só lugar.</p></div>
+          <div class="admin-actions">
+            <button id="refreshAll" class="admin-btn" type="button">ATUALIZAR DADOS ↻</button>
+            <button id="resetTestData" class="admin-btn danger" type="button" data-master-only>LIMPAR DADOS DE TESTE</button>
+          </div>
+        </div>
+        <div class="admin-stat-row">
+          <div class="admin-stat"><strong id="statToday">—</strong><span>RESERVAS HOJE</span></div>
+          <div class="admin-stat"><strong id="statConfirmed">—</strong><span>CONFIRMADAS</span></div>
+          <div class="admin-stat"><strong id="statPros">01</strong><span>PROFISSIONAIS ATIVOS</span></div>
+        </div>
+
+        <nav class="admin-tabs" aria-label="Seções do painel">
+          <button type="button" class="active" data-tab="agenda" data-permission="agenda">AGENDA</button>
+          <button type="button" data-tab="manual" data-permission="agendamento_manual">NOVO AGENDAMENTO</button>
+          <button type="button" data-tab="pacotes" data-permission="pacotes">PACOTES</button>
+          <button type="button" data-tab="recorrencias" data-permission="recorrencias">RECORRÊNCIAS</button>
+          <button type="button" data-tab="feriados" data-permission="feriados">FERIADOS</button>
+          <button type="button" data-tab="configuracoes" data-permission="configuracoes">CONFIGURAÇÕES</button>
+          <button type="button" data-tab="integracoes" data-permission="integracoes">GOOGLE AGENDA</button>
+          <button type="button" data-tab="bloqueios" data-permission="bloqueios">BLOQUEIOS</button>
+          <button type="button" data-tab="horarios" data-permission="expediente">EXPEDIENTE</button>
+          <button type="button" data-tab="servicos" data-permission="servicos">SERVIÇOS</button>
+          <button type="button" data-tab="equipe" data-permission="profissionais">EQUIPE</button>
+          <button type="button" data-tab="cupons" data-permission="cupons">CUPONS</button>
+          <button type="button" data-tab="vip" data-permission="vip">CLIENTES VIP</button>
+          <button type="button" data-tab="clientes" data-permission="clientes">CLIENTES</button>
+          <button type="button" data-tab="usuarios" data-master-only>USUÁRIOS</button>
+        </nav>
+
+        <section class="admin-section active" data-section="agenda">
+          <div class="admin-card">
+            <h2>RESERVAS</h2>
+            <p>Consulte a agenda e atualize o status de cada atendimento.</p>
+            <div class="admin-tools">
+              <div><label for="bookDate">DATA</label><input id="bookDate" type="date"></div>
+              <div><label for="bookPro">PROFISSIONAL</label><select id="bookPro"><option value="">TODOS</option></select></div>
+              <button id="reloadBookings" class="admin-btn" type="button">BUSCAR ↻</button>
+              <button id="exportDayCalendar" class="admin-btn" type="button">EXPORTAR DIA (.ICS)</button>
+            </div>
+            <div class="admin-card" style="margin:14px 0;background:#fff4ef">
+              <h2>PRÓXIMOS ATENDIMENTOS</h2>
+              <div id="upcomingAppointments"><p>Carregando próximos horários...</p></div>
+            </div>
+            <div class="admin-stat-row" style="grid-template-columns:repeat(2,1fr)">
+              <div class="admin-stat"><strong id="dayCount">—</strong><span>ATENDIMENTOS NO DIA</span></div>
+              <div class="admin-stat"><strong id="dayRevenue">—</strong><span>VALOR PREVISTO (CONFIRMADOS)</span></div>
+            </div>
+            <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>HORÁRIO</th><th>CLIENTE</th><th>PROFISSIONAL</th><th>SERVIÇO</th><th>STATUS</th><th>AÇÕES</th></tr></thead><tbody id="bookRows"><tr><td colspan="6">Carregando agenda...</td></tr></tbody></table></div>
+          </div>
+        </section>
+
+        <section class="admin-section" data-section="manual">
+          <div class="admin-card">
+            <h2>AGENDAMENTO MANUAL</h2>
+            <p>Registre uma reserva feita por telefone ou presencialmente. O horário é validado na agenda antes de confirmar.</p>
+            <form id="manualForm">
+              <div class="admin-fields">
+                <div><label for="manualPro">PROFISSIONAL</label><select id="manualPro" required></select></div>
+                <div><label for="manualService">SERVIÇO</label><select id="manualService" required></select></div>
+                <div><label for="manualDate">DATA</label><input id="manualDate" type="date" required></div>
+                <div><label for="manualTime">HORÁRIO DISPONÍVEL</label><select id="manualTime" required><option value="">Selecione profissional, serviço e data</option></select></div>
+                <div><label for="manualDuration">DURAÇÃO DESTE ATENDIMENTO (MIN)</label><input id="manualDuration" type="number" min="5" max="300" step="5" value="60" required></div>
+                <div><label for="manualPackage">USAR PACOTE DA CLIENTE (OPCIONAL)</label><select id="manualPackage"><option value="">Sem pacote</option></select></div>
+                <div><label for="manualName">NOME DO CLIENTE</label><input id="manualName" maxlength="100" required></div>
+                <div><label for="manualPhone">WHATSAPP COM DDD</label><input id="manualPhone" type="tel" maxlength="25" required placeholder="(31) 99999-9999"></div>
+                <div><label for="manualEmail">E-MAIL (OPCIONAL)</label><input id="manualEmail" type="email" maxlength="150"></div>
+                <div><label for="manualVipCode">CÓDIGO VIP (OPCIONAL)</label><input id="manualVipCode" maxlength="30" autocapitalize="characters" placeholder="Informe se o cliente for VIP"></div>
+                <div><label for="manualNotes">OBSERVAÇÃO (OPCIONAL)</label><input id="manualNotes" maxlength="400"></div>
+              </div>
+              <label class="admin-check"><input id="manualConsent" type="checkbox" required> Cliente autorizou o uso dos dados para esta reserva.</label>
+              <button class="admin-btn primary" type="submit" style="margin-top:14px">REGISTRAR RESERVA ↗</button>
+              <p id="manualResult" class="admin-note" role="status"></p>
+            </form>
+          </div>
+        </section>
+
+        <section class="admin-section" data-section="pacotes">
+          <div class="admin-grid">
+            <div class="admin-card">
+              <h2>VENDER / CADASTRAR PACOTE</h2>
+              <p>Pacote padrão: seis atendimentos por R$ 140, com validade de dois meses. A Simone pode ajustar esses dados no cadastro.</p>
+              <form id="packageForm">
+                <div><label for="packageClient">CLIENTE</label><select id="packageClient" required><option value="">Selecione uma cliente</option></select></div>
+                <div class="admin-fields">
+                  <div><label for="packageCredits">QUANTIDADE DE ATENDIMENTOS</label><input id="packageCredits" type="number" min="1" max="100" value="6" required></div>
+                  <div><label for="packageValue">VALOR TOTAL (R$)</label><input id="packageValue" type="number" min="0" step="0.01" value="140" required></div>
+                  <div><label for="packagePurchase">DATA DA COMPRA</label><input id="packagePurchase" type="date" required></div>
+                  <div><label for="packageValidity">VALIDADE (MESES)</label><input id="packageValidity" type="number" min="1" max="12" value="2" required></div>
+                </div>
+                <label for="packageNotes">OBSERVAÇÃO (OPCIONAL)</label><input id="packageNotes" maxlength="300">
+                <button class="admin-btn primary" type="submit">REGISTRAR PACOTE ↗</button>
+              </form>
+              <p id="packageMessage" class="admin-note" role="status"></p>
+            </div>
+            <div class="admin-card">
+              <h2>COMO FUNCIONA</h2>
+              <p>O saldo é atualizado automaticamente quando um atendimento é vinculado ao pacote. Se a cliente avisar com antecedência e a Simone decidir devolver o crédito, o painel poderá registrar o estorno.</p>
+              <p>Pacotes vencidos ou sem créditos não poderão ser usados em novos agendamentos.</p>
+            </div>
+          </div>
+          <div class="admin-card">
+            <h2>PAINEL DE PACOTES</h2>
+            <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>CLIENTE</th><th>PACOTE</th><th>SALDO</th><th>VALOR</th><th>COMPRA</th><th>VALIDADE</th><th>STATUS</th><th>AÇÃO</th></tr></thead><tbody id="packageRows"><tr><td colspan="8">Carregando pacotes...</td></tr></tbody></table></div>
+          </div>
+        </section>
+
+        <section class="admin-section" data-section="recorrencias">
+          <div class="admin-card">
+            <h2>HORÁRIOS FIXOS / RECORRÊNCIAS</h2>
+            <p>Crie uma série semanal para clientes fixas. Depois, altere em massa os próximos horários sem precisar editar atendimento por atendimento.</p>
+            <form id="recurrenceForm">
+              <div class="admin-fields">
+                <div><label for="recurrenceClient">CLIENTE</label><select id="recurrenceClient" required><option value="">Selecione uma cliente</option></select></div>
+                <div><label for="recurrencePro">PROFISSIONAL</label><select id="recurrencePro" required></select></div>
+                <div><label for="recurrenceService">SERVIÇO</label><select id="recurrenceService" required></select></div>
+                <div><label for="recurrenceDay">DIA DA SEMANA</label><select id="recurrenceDay" required><option value="2">TERÇA-FEIRA</option><option value="3">QUARTA-FEIRA</option><option value="4">QUINTA-FEIRA</option><option value="5">SEXTA-FEIRA</option><option value="6">SÁBADO</option></select></div>
+                <div><label for="recurrenceTime">HORÁRIO</label><input id="recurrenceTime" type="time" value="14:00" required></div>
+                <div><label for="recurrenceDuration">DURAÇÃO (MIN)</label><input id="recurrenceDuration" type="number" min="5" max="300" step="5" value="60" required></div>
+                <div><label for="recurrenceInterval">REPETIR A CADA (SEMANAS)</label><input id="recurrenceInterval" type="number" min="1" max="12" value="1" required></div>
+                <div><label for="recurrenceStart">INICIAR EM</label><input id="recurrenceStart" type="date" required></div>
+                <div><label for="recurrenceEnd">GERAR ATÉ</label><input id="recurrenceEnd" type="date" required></div>
+              </div>
+              <button class="admin-btn primary" type="submit">CRIAR HORÁRIOS RECORRENTES ↗</button>
+            </form>
+            <p id="recurrenceMessage" class="admin-note" role="status"></p>
+          </div>
+          <div class="admin-card">
+            <h2>ALTERAR PRÓXIMAS OCORRÊNCIAS EM MASSA</h2>
+            <form id="recurrenceEditForm">
+              <input type="hidden" id="recurrenceEditId">
+              <div class="admin-fields">
+                <div><label for="recurrenceEditFrom">ALTERAR A PARTIR DE</label><input id="recurrenceEditFrom" type="date" required></div>
+                <div><label for="recurrenceEditDay">NOVO DIA (OPCIONAL)</label><select id="recurrenceEditDay"><option value="">Manter dia atual</option><option value="2">TERÇA-FEIRA</option><option value="3">QUARTA-FEIRA</option><option value="4">QUINTA-FEIRA</option><option value="5">SEXTA-FEIRA</option><option value="6">SÁBADO</option></select></div>
+                <div><label for="recurrenceEditTime">NOVO HORÁRIO</label><input id="recurrenceEditTime" type="time"></div>
+                <div><label for="recurrenceEditDuration">NOVA DURAÇÃO (MIN)</label><input id="recurrenceEditDuration" type="number" min="5" max="300" step="5"></div>
+              </div>
+              <button class="admin-btn primary" type="submit">APLICAR ALTERAÇÃO EM MASSA ↗</button>
+              <button id="cancelRecurrenceEdit" class="admin-btn" type="button">LIMPAR SELEÇÃO</button>
+            </form>
+            <p id="recurrenceEditMessage" class="admin-note" role="status"></p>
+          </div>
+          <div class="admin-card">
+            <h2>SÉRIES CADASTRADAS</h2>
+            <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>CLIENTE</th><th>SERVIÇO</th><th>DIA / HORÁRIO</th><th>DURAÇÃO</th><th>PERÍODO</th><th>STATUS</th><th>AÇÕES</th></tr></thead><tbody id="recurrenceRows"><tr><td colspan="7">Carregando recorrências...</td></tr></tbody></table></div>
+          </div>
+        </section>
+
+        <section class="admin-section" data-section="feriados">
+          <div class="admin-grid">
+            <div class="admin-card">
+              <h2>CADASTRAR FERIADO</h2>
+              <p>Feriados nacionais de 2026 e 2027 já vêm pré-cadastrados nesta versão. Adicione feriados estaduais, municipais ou datas especiais. Você pode decidir se cada data bloqueia a agenda.</p>
+              <form id="holidayForm">
+                <div><label for="holidayDate">DATA</label><input id="holidayDate" type="date" required></div>
+                <div><label for="holidayName">NOME</label><input id="holidayName" maxlength="120" required placeholder="Ex.: feriado municipal"></div>
+                <div class="admin-fields">
+                  <div><label for="holidayScope">ABRANGÊNCIA</label><select id="holidayScope"><option value="nacional">NACIONAL</option><option value="estadual">ESTADUAL</option><option value="municipal">MUNICIPAL</option><option value="facultativo">PONTO FACULTATIVO</option><option value="outro">OUTRO</option></select></div>
+                  <div><label for="holidayUf">UF</label><input id="holidayUf" maxlength="2" value="MG"></div>
+                  <div><label for="holidayCity">MUNICÍPIO</label><input id="holidayCity" maxlength="100"></div>
+                </div>
+                <label class="admin-check"><input id="holidayBlocks" type="checkbox" checked> BLOQUEAR AGENDAMENTOS NESTA DATA</label>
+                <button class="admin-btn primary" type="submit">SALVAR FERIADO ↗</button>
+              </form>
+              <p id="holidayMessage" class="admin-note" role="status"></p>
+            </div>
+            <div class="admin-card">
+              <h2>FERIADOS E DATAS ESPECIAIS</h2>
+              <div id="holidayRows"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="admin-section" data-section="configuracoes">
+          <div class="admin-grid">
+            <div class="admin-card">
+              <h2>CONFIGURAÇÕES DA AGENDA</h2>
+              <p>Defina parâmetros gerais. A duração de cada atendimento continua podendo ser ajustada individualmente no agendamento.</p>
+              <form id="settingsForm">
+                <label for="settingBusinessName">NOME DO NEGÓCIO</label><input id="settingBusinessName" maxlength="100" value="Unhas da Simone" required>
+                <label for="settingProfessionalName">NOME DA PROFISSIONAL PRINCIPAL</label><input id="settingProfessionalName" maxlength="100" value="Simone Jorge" required>
+                <div class="admin-fields">
+                  <div><label for="settingLeadTime">ANTECEDÊNCIA MÍNIMA (MIN)</label><input id="settingLeadTime" type="number" min="0" max="10080" value="0"></div>
+                  <div><label for="settingGap">INTERVALO ENTRE ATENDIMENTOS (MIN)</label><input id="settingGap" type="number" min="0" max="180" value="0"></div>
+                  <div><label for="settingPackageCredits">CRÉDITOS PADRÃO DO PACOTE</label><input id="settingPackageCredits" type="number" min="1" max="100" value="6"></div>
+                  <div><label for="settingPackageValue">VALOR PADRÃO DO PACOTE (R$)</label><input id="settingPackageValue" type="number" min="0" step="0.01" value="140"></div>
+                  <div><label for="settingPackageMonths">VALIDADE DO PACOTE (MESES)</label><input id="settingPackageMonths" type="number" min="1" max="24" value="2"></div>
+                </div>
+                <button class="admin-btn primary" type="submit">SALVAR CONFIGURAÇÕES ↗</button>
+              </form>
+              <p id="settingsMessage" class="admin-note" role="status"></p>
+            </div>
+            <div class="admin-card">
+              <h2>CONFIRMAÇÃO PELO WHATSAPP</h2>
+              <p>Texto padrão enviado quando a Simone registra um atendimento manual. Campos disponíveis: {{nome}}, {{data}}, {{hora}}, {{servico}}, {{profissional}}.</p>
+              <label for="confirmationTemplate">MENSAGEM PADRÃO</label>
+              <textarea id="confirmationTemplate" rows="7">Olá, {{nome}}! Seu horário no Unhas da Simone está confirmado para {{data}} às {{hora}}, para {{servico}}. Se precisar alterar ou cancelar, avise com antecedência por mensagem.</textarea>
+              <button id="saveConfirmationTemplate" class="admin-btn primary" type="button">SALVAR MENSAGEM ↗</button>
+              <p id="messageTemplateStatus" class="admin-note" role="status"></p>
+            </div>
+          </div>
+        </section>
+
+        <section class="admin-section" data-section="integracoes">
+          <div class="admin-card">
+            <h2>GOOGLE AGENDA</h2>
+            <p id="googleCalendarStatus">Verificando conexão...</p>
+            <p>A sincronização automática bidirecional depende da configuração OAuth do Google. Até ela ser ativada, exporte o dia em .ics pela Agenda e cadastre compromissos pessoais em Bloqueios.</p>
+            <p>Quando a conexão OAuth estiver ativa, os compromissos pessoais poderão bloquear a agenda de atendimento sem precisar cadastrá-los manualmente.</p>
+          </div>
+        </section>
+
+        <section class="admin-section" data-section="bloqueios">
+          <div class="admin-grid">
+            <div class="admin-card">
+              <h2>BLOQUEAR HORÁRIO</h2>
+              <p>Use para pausas, compromissos, férias ou indisponibilidade do profissional.</p>
+              <form id="blockForm">
+                <label for="blockPro">PROFISSIONAL</label><select id="blockPro" required></select>
+                <label for="blockDate">DATA</label><input id="blockDate" type="date" required>
+                <div class="admin-fields">
+                  <div><label for="blockStart">INÍCIO</label><input id="blockStart" type="time" value="12:00" required></div>
+                  <div><label for="blockEnd">FIM</label><input id="blockEnd" type="time" value="13:00" required></div>
+                </div>
+                <label for="blockReason">MOTIVO</label><input id="blockReason" maxlength="150" placeholder="Ex.: compromisso">
+                <button class="admin-btn primary" type="submit" style="margin-top:14px">SALVAR BLOQUEIO ↗</button>
+              </form>
+              <p id="blockMessage" class="admin-note"></p>
+            </div>
+            <div class="admin-card">
+              <h2>PERÍODOS BLOQUEADOS</h2>
+              <div class="admin-tools"><div><label for="blockFilter">DATA</label><input id="blockFilter" type="date"></div><button id="reloadBlocks" class="admin-btn" type="button">ATUALIZAR ↻</button></div>
+              <div id="blockList"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="admin-section" data-section="horarios">
+          <div class="admin-card">
+            <h2>EXPEDIENTE</h2>
+            <p>Defina os dias e horários em que cada profissional recebe agendamentos. Esta versão permite uma faixa contínua por dia.</p>
+            <label for="hoursPro">PROFISSIONAL</label><select id="hoursPro" style="max-width:340px"></select>
+            <div id="hoursRows" style="margin-top:16px"></div>
+            <button id="saveHours" class="admin-btn primary" type="button" style="margin-top:16px">SALVAR EXPEDIENTE ↗</button>
+            <p id="hoursMessage" class="admin-note"></p>
+          </div>
+        </section>
+
+        <section class="admin-section" data-section="servicos">
+          <div class="admin-card">
+            <h2>SERVIÇOS E PREÇOS</h2>
+            <p>Cadastre, edite, desative ou exclua serviços. Serviços com reservas vinculadas não podem ser apagados para preservar o histórico.</p>
+            <form id="serviceForm">
+              <input type="hidden" id="serviceEditId">
+              <div class="admin-fields">
+                <div><label for="serviceNewName">NOME DO SERVIÇO</label><input id="serviceNewName" maxlength="120" required placeholder="Ex.: Esmaltação especial"></div>
+                <div><label for="serviceNewDuration">DURAÇÃO (MIN)</label><input id="serviceNewDuration" type="number" min="10" max="300" step="5" value="60" required></div>
+                <div><label for="serviceNewPrice">PREÇO (R$)</label><input id="serviceNewPrice" type="number" min="0" step="0.01" required placeholder="Ex.: 45,00"></div>
+              </div>
+              <label class="admin-check"><input id="serviceNewActive" type="checkbox" checked> SERVIÇO ATIVO</label>
+              <div class="admin-actions" style="margin-top:12px"><button id="saveNewService" class="admin-btn primary" type="submit">CADASTRAR SERVIÇO ↗</button><button id="cancelServiceEdit" class="admin-btn" type="button" hidden>CANCELAR EDIÇÃO</button></div>
+            </form>
+            <div id="servicesEditor"></div>
+            <p id="servicesMessage" class="admin-note"></p>
+          </div>
+        </section>
+
+        <section class="admin-section" data-section="cupons">
+          <div class="admin-card">
+            <h2>CAMPANHAS E CUPONS</h2>
+            <p>Crie códigos promocionais, defina o desconto, o período da campanha e o limite de utilizações. O cliente informa o código na etapa final do agendamento.</p>
+            <form id="couponForm">
+              <input type="hidden" id="couponId">
+              <div class="admin-fields">
+                <div><label for="couponName">NOME DA CAMPANHA</label><input id="couponName" maxlength="100" required placeholder="Ex.: Semana do Cliente"></div>
+                <div><label for="couponCode">CÓDIGO DO CUPOM</label><input id="couponCode" maxlength="30" required placeholder="Ex.: CAPONE15" autocapitalize="characters"></div>
+                <div><label for="couponType">TIPO DE DESCONTO</label><select id="couponType" required><option value="percentual">PORCENTAGEM (%)</option><option value="fixo">VALOR FIXO (R$)</option></select></div>
+                <div><label for="couponValue">VALOR DO DESCONTO</label><input id="couponValue" type="number" min="0.01" max="100" step="0.01" required placeholder="Ex.: 15"></div>
+                <div><label for="couponStart">INÍCIO DA CAMPANHA</label><input id="couponStart" type="date" required></div>
+                <div><label for="couponEnd">FIM DA CAMPANHA</label><input id="couponEnd" type="date" required></div>
+                <div><label for="couponMaxUses">QUANTIDADE TOTAL DE CUPONS</label><input id="couponMaxUses" type="number" min="1" step="1" required value="50"></div>
+                <div><label for="couponMaxPerClient">USOS POR CLIENTE</label><input id="couponMaxPerClient" type="number" min="1" step="1" required value="1"></div>
+              </div>
+              <label class="admin-check" style="margin-top:15px"><input id="couponActive" type="checkbox" checked> CAMPANHA ATIVA</label>
+              <div class="admin-actions" style="margin-top:16px">
+                <button id="saveCoupon" class="admin-btn primary" type="submit">CRIAR CAMPANHA ↗</button>
+                <button id="cancelCouponEdit" class="admin-btn" type="button" hidden>CANCELAR EDIÇÃO</button>
+              </div>
+            </form>
+            <p id="couponMessage" class="admin-note" role="status"></p>
+          </div>
+          <div class="admin-card">
+            <h2>CAMPANHAS CADASTRADAS</h2>
+            <p>Acompanhe o consumo de cada campanha. Campanhas pausadas ou encerradas não aceitam novos cupons.</p>
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead><tr><th>CAMPANHA</th><th>CÓDIGO</th><th>DESCONTO</th><th>PERÍODO</th><th>UTILIZAÇÕES</th><th>STATUS</th><th>AÇÕES</th></tr></thead>
+                <tbody id="couponRows"><tr><td colspan="7">Carregando campanhas...</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="admin-section" data-section="vip">
+          <div class="admin-card">
+            <h2>CADASTRO DE CLIENTES VIP</h2>
+            <p>Registre os dados do cliente, defina o nível de relacionamento e gere um código individual vinculado ao WhatsApp.</p>
+            <form id="vipClientForm">
+              <input type="hidden" id="vipClientId">
+              <div class="admin-fields">
+                <div><label for="vipClientName">NOME DO CLIENTE</label><input id="vipClientName" maxlength="100" required placeholder="Nome completo"></div>
+                <div><label for="vipClientPhone">WHATSAPP COM DDD</label><input id="vipClientPhone" type="tel" maxlength="25" required placeholder="(31) 99999-9999"></div>
+                <div><label for="vipClientLevel">NÍVEL VIP</label><select id="vipClientLevel" required><option value="Bronze">BRONZE</option><option value="Prata">PRATA</option><option value="Ouro">OURO</option><option value="Platina">PLATINA</option><option value="Black">BLACK</option></select></div>
+                <div><label for="vipClientBirthday">DATA DE ANIVERSÁRIO</label><input id="vipClientBirthday" type="date"></div>
+                <div><label for="vipClientCode">CÓDIGO VIP INDIVIDUAL</label><input id="vipClientCode" maxlength="30" required placeholder="VIP-XXXXXXXX" autocapitalize="characters"></div>
+                <div style="display:flex;align-items:end"><button id="generateVipCode" class="admin-btn" type="button" style="width:100%">GERAR CÓDIGO ↻</button></div>
+                <div><label for="vipDiscountType">BENEFÍCIO DE DESCONTO</label><select id="vipDiscountType"><option value="nenhum">SEM DESCONTO FIXO</option><option value="percentual">PORCENTAGEM (%)</option><option value="fixo">VALOR FIXO (R$)</option></select></div>
+                <div><label for="vipDiscountValue">VALOR DO DESCONTO</label><input id="vipDiscountValue" type="number" min="0" step="0.01" value="0" placeholder="Ex.: 10"></div>
+              </div>
+              <label for="vipClientNotes">OBSERVAÇÕES INTERNAS (OPCIONAL)</label><textarea id="vipClientNotes" rows="2" maxlength="400" placeholder="Informações para a equipe"></textarea>
+              <label class="admin-check"><input id="vipClientActive" type="checkbox" checked> ACESSO VIP ATIVO</label>
+              <div class="admin-actions" style="margin-top:14px"><button id="saveVipClient" class="admin-btn primary" type="submit">CADASTRAR CLIENTE VIP ↗</button><button id="cancelVipClientEdit" class="admin-btn" type="button" hidden>CANCELAR EDIÇÃO</button></div>
+            </form>
+            <p id="vipClientMessage" class="admin-note" role="status"></p>
+          </div>
+          <div class="admin-card">
+            <h2>GESTÃO DE CLIENTES VIP</h2>
+            <p>Gerencie nome, WhatsApp, observações, nível de relacionamento, aniversário, código, benefícios e pontuação.</p>
+            <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>CLIENTE / OBSERVAÇÃO</th><th>WHATSAPP</th><th>NÍVEL VIP</th><th>ANIVERSÁRIO</th><th>CÓDIGO</th><th>DESCONTO</th><th>PONTOS</th><th>STATUS</th><th>AÇÕES</th></tr></thead><tbody id="vipClientRows"><tr><td colspan="9">Carregando clientes VIP...</td></tr></tbody></table></div>
+          </div>
+          <div class="admin-card" id="whatsappRelationshipCard">
+            <h2>CENTRAL DE MENSAGENS WHATSAPP</h2>
+            <p>Escolha um cliente, selecione o tipo de comunicação, ajuste o texto e abra a conversa com a mensagem preenchida. O envio é confirmado manualmente dentro do WhatsApp; não utiliza API.</p>
+            <div class="admin-fields">
+              <div><label for="waClientSelect">CLIENTE</label><select id="waClientSelect"><option value="">Selecione um cliente</option></select></div>
+              <div><label for="waMessageType">TIPO DE MENSAGEM</label><select id="waMessageType"><option value="promo">PROMOÇÃO RELÂMPAGO</option><option value="date">DATA COMEMORATIVA</option><option value="birthday">ANIVERSÁRIO</option><option value="reminder">LEMBRETE</option><option value="hours">AVISO DE HORÁRIO</option></select></div>
+              <div><label id="waDetailLabel" for="waMessageDetail">OFERTA / DESCONTO</label><input id="waMessageDetail" maxlength="220" placeholder="Ex.: desconto na mão, no pé ou no pacote"></div>
+              <div><label id="waDeadlineLabel" for="waMessageDeadline">VALIDADE DA PROMOÇÃO</label><input id="waMessageDeadline" maxlength="160" placeholder="Ex.: até sexta-feira, 27/11"></div>
+            </div>
+            <label for="waMessageTemplate">MENSAGEM PRONTA (EDITÁVEL)</label>
+            <textarea id="waMessageTemplate" rows="7" maxlength="2000"></textarea>
+            <p class="admin-help">Campos disponíveis no texto: <code>{nome}</code>, <code>{detalhe}</code> e <code>{prazo}</code>. Eles serão substituídos antes de abrir o WhatsApp.</p>
+            <div class="wa-message-preview"><span class="micro">PRÉVIA DA MENSAGEM</span><p id="waMessagePreview">Selecione um cliente para visualizar a mensagem.</p></div>
+            <div class="admin-actions" style="margin-top:14px">
+              <button id="saveWaTemplate" class="admin-btn" type="button">SALVAR MODELO NESTE NAVEGADOR</button>
+              <button id="resetWaTemplate" class="admin-btn" type="button">RESTAURAR MODELO PADRÃO</button>
+              <button id="openWaMessage" class="admin-btn primary" type="button">ABRIR WHATSAPP PARA ENVIAR ↗</button>
+            </div>
+            <p id="waMessageStatus" class="admin-note" role="status"></p>
+          </div>
+          <div class="admin-grid">
+            <div class="admin-card">
+              <h2>HORÁRIOS EXCLUSIVOS</h2>
+              <p>Cadastre faixas extras por profissional e data. Elas só aparecem para clientes com código VIP válido.</p>
+              <form id="vipHoursForm">
+                <label for="vipHourPro">PROFISSIONAL</label><select id="vipHourPro" required></select>
+                <label for="vipHourDate">DATA</label><input id="vipHourDate" type="date" required>
+                <div class="admin-fields"><div><label for="vipHourStart">INÍCIO</label><input id="vipHourStart" type="time" value="08:00" required></div><div><label for="vipHourEnd">FIM</label><input id="vipHourEnd" type="time" value="09:00" required></div></div>
+                <label for="vipHourDescription">IDENTIFICAÇÃO (OPCIONAL)</label><input id="vipHourDescription" maxlength="120" placeholder="Ex.: Horário antecipado VIP">
+                <button class="admin-btn primary" type="submit" style="margin-top:14px">ADICIONAR HORÁRIO VIP ↗</button>
+              </form>
+              <p id="vipHoursMessage" class="admin-note"></p><div id="vipHoursList"></div>
+            </div>
+            <div class="admin-card">
+              <h2>PONTUAÇÃO E RECOMPENSAS</h2>
+              <p>Defina quantos pontos o cliente recebe por real pago e cadastre os serviços que poderão ser resgatados.</p>
+              <form id="vipPointsForm"><label for="vipPointsPerReal">PONTOS POR R$ 1,00 PAGO</label><input id="vipPointsPerReal" type="number" min="0.01" max="1000" step="0.01" value="1" required><button class="admin-btn primary" type="submit" style="margin-top:12px">SALVAR REGRA DE PONTOS ↗</button></form>
+              <p id="vipPointsMessage" class="admin-note"></p>
+              <div class="admin-divider" style="height:1px;background:#4b3628;margin:20px 0"></div>
+              <form id="vipRewardForm"><label for="vipRewardName">NOME DA RECOMPENSA</label><input id="vipRewardName" maxlength="100" required placeholder="Ex.: Mão ou pé gratuito"><label for="vipRewardDescription">DESCRIÇÃO</label><input id="vipRewardDescription" maxlength="300" placeholder="Detalhes da recompensa"><label for="vipRewardPoints">PONTOS NECESSÁRIOS</label><input id="vipRewardPoints" type="number" min="1" step="1" required placeholder="Ex.: 500"><label class="admin-check"><input id="vipRewardActive" type="checkbox" checked> RECOMPENSA ATIVA</label><button class="admin-btn primary" type="submit" style="margin-top:12px">CADASTRAR RECOMPENSA ↗</button></form>
+              <p id="vipRewardMessage" class="admin-note"></p><div id="vipRewardsList"></div>
+            </div>
+          </div>
+          <div class="admin-card">
+            <h2>PROMOÇÕES E COMBOS VIP</h2>
+            <p>Cadastre promoções com desconto automático ou combos informativos. O agendamento atual seleciona um serviço por reserva; combos aparecem na área VIP com suas condições para a equipe orientar o cliente.</p>
+            <form id="vipOfferForm">
+              <div class="admin-fields">
+                <div><label for="vipOfferTitle">TÍTULO</label><input id="vipOfferTitle" maxlength="100" required placeholder="Ex.: Combo mão + pé"></div>
+                <div><label for="vipOfferType">TIPO</label><select id="vipOfferType"><option value="promocao">PROMOÇÃO</option><option value="combo">COMBO</option></select></div>
+                <div><label for="vipOfferService">SERVIÇO APLICÁVEL</label><select id="vipOfferService"><option value="">TODOS OS SERVIÇOS</option></select></div>
+                <div><label for="vipOfferDiscountType">DESCONTO</label><select id="vipOfferDiscountType"><option value="nenhum">SOMENTE DIVULGAÇÃO</option><option value="percentual">PORCENTAGEM (%)</option><option value="fixo">VALOR FIXO (R$)</option></select></div>
+                <div><label for="vipOfferDiscountValue">VALOR DO DESCONTO</label><input id="vipOfferDiscountValue" type="number" min="0" step="0.01" value="0"></div>
+                <div><label for="vipOfferStart">INÍCIO</label><input id="vipOfferStart" type="date" required></div>
+                <div><label for="vipOfferEnd">TÉRMINO</label><input id="vipOfferEnd" type="date" required></div>
+              </div>
+              <label for="vipOfferDescription">DESCRIÇÃO DA OFERTA</label><textarea id="vipOfferDescription" rows="2" maxlength="500" required placeholder="Explique o benefício, as condições e o que está incluído"></textarea>
+              <label class="admin-check"><input id="vipOfferActive" type="checkbox" checked> OFERTA ATIVA</label>
+              <button class="admin-btn primary" type="submit" style="margin-top:14px">CADASTRAR OFERTA VIP ↗</button>
+            </form>
+            <p id="vipOfferMessage" class="admin-note"></p>
+            <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>OFERTA</th><th>TIPO</th><th>SERVIÇO</th><th>DESCONTO</th><th>PERÍODO</th><th>STATUS</th><th>AÇÕES</th></tr></thead><tbody id="vipOfferRows"><tr><td colspan="7">Carregando ofertas...</td></tr></tbody></table></div>
+          </div>
+          <div class="admin-card">
+            <h2>SOLICITAÇÕES DE RESGATE</h2>
+            <p>Quando o cliente solicita uma recompensa, os pontos ficam reservados. A pontuação só é debitada quando a equipe marca o resgate como entregue.</p>
+            <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>CLIENTE</th><th>RECOMPENSA</th><th>PONTOS</th><th>SOLICITAÇÃO</th><th>STATUS</th><th>AÇÕES</th></tr></thead><tbody id="vipRedemptionRows"><tr><td colspan="6">Carregando solicitações...</td></tr></tbody></table></div>
+            <p id="vipRedemptionMessage" class="admin-note"></p>
+          </div>
+        </section>
+        <section class="admin-section" data-section="equipe">
+          <div class="admin-card">
+            <h2>PROFISSIONAIS</h2>
+            <p>Cadastre e edite os profissionais que aparecem na agenda. Um profissional com reservas ou horários vinculados não pode ser excluído; nesse caso, desative o cadastro para manter o histórico.</p>
+            <form id="professionalForm">
+              <input type="hidden" id="professionalEditId">
+              <div class="admin-fields">
+                <div><label for="professionalName">NOME DO PROFISSIONAL</label><input id="professionalName" maxlength="100" required placeholder="Nome completo"></div>
+              </div>
+              <label class="admin-check"><input id="professionalActive" type="checkbox" checked> PROFISSIONAL ATIVO</label>
+              <div class="admin-actions" style="margin-top:12px"><button id="saveProfessional" class="admin-btn primary" type="submit">CADASTRAR PROFISSIONAL ↗</button><button id="cancelProfessionalEdit" class="admin-btn" type="button" hidden>CANCELAR EDIÇÃO</button></div>
+            </form>
+            <p id="professionalMessage" class="admin-note" role="status"></p>
+            <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>NOME</th><th>STATUS</th><th>AÇÕES</th></tr></thead><tbody id="professionalRows"><tr><td colspan="3">Carregando profissionais...</td></tr></tbody></table></div>
+          </div>
+        </section>
+
+        <section class="admin-section" data-section="clientes">
+          <div class="admin-card">
+            <h2>CADASTRO DE CLIENTES</h2>
+            <p>Lista consolidada dos clientes que já realizaram ou possuem reservas e dos clientes VIP cadastrados.</p>
+            <div class="admin-tools"><div><label for="customerSearch">BUSCAR CLIENTE</label><input id="customerSearch" type="search" placeholder="Nome ou WhatsApp"></div><button id="reloadCustomers" class="admin-btn" type="button">ATUALIZAR ↻</button></div>
+            <p class="admin-danger-note admin-help">A exclusão remove o cadastro VIP, pontos e dados pessoais. Reservas anteriores permanecem no histórico, mas nome, telefone, e-mail e observações são anonimizados.</p>
+            <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>CLIENTE</th><th>WHATSAPP</th><th>RESERVAS</th><th>ÚLTIMA VISITA</th><th>VIP</th><th>AÇÕES</th></tr></thead><tbody id="customerRows"><tr><td colspan="6">Carregando clientes...</td></tr></tbody></table></div>
+            <p id="customerMessage" class="admin-note" role="status"></p>
+          </div>
+        </section>
+
+        <section class="admin-section" data-section="usuarios">
+          <div class="admin-card">
+            <h2>GESTÃO DE COLABORADORES</h2>
+            <p>Crie acessos individuais, vincule cada pessoa a um profissional e escolha exatamente quais áreas poderá utilizar. A Simone fará essa gestão diretamente pelo painel.</p>
+            <form id="collaboratorForm">
+              <input type="hidden" id="collaboratorId">
+              <div class="admin-fields">
+                <div><label for="collaboratorName">NOME</label><input id="collaboratorName" maxlength="100" required placeholder="Nome do colaborador"></div>
+                <div><label for="collaboratorEmail">E-MAIL DE ACESSO</label><input id="collaboratorEmail" type="email" required placeholder="colaborador@email.com"></div>
+                <div><label for="collaboratorPassword">SENHA INICIAL</label><input id="collaboratorPassword" type="password" minlength="8" autocomplete="new-password" placeholder="Mínimo de 8 caracteres"></div>
+                <div><label for="collaboratorRole">PERFIL</label><select id="collaboratorRole"><option value="RECEPCAO">RECEPÇÃO</option><option value="GERENTE">GERENTE</option><option value="PROFISSIONAL">PROFISSIONAL</option><option value="PERSONALIZADO">PERSONALIZADO</option><option value="MASTER">MASTER</option></select></div>
+                <div id="collaboratorProfessionalWrap"><label for="collaboratorProfessional">PROFISSIONAL VINCULADO</label><select id="collaboratorProfessional"><option value="">Selecione um profissional</option></select></div>
+              </div>
+              <label>PERMISSÕES DO COLABORADOR</label>
+              <div class="admin-permissions" id="collaboratorPermissions">
+                <label class="admin-permission"><input type="checkbox" data-perm="agenda"> <span>Agenda: consultar e atualizar reservas</span></label>
+                <label class="admin-permission"><input type="checkbox" data-perm="agendamento_manual"> <span>Agendamento manual: criar reservas pelo painel</span></label>
+                <label class="admin-permission"><input type="checkbox" data-perm="bloqueios"> <span>Bloqueios: bloquear e remover horários</span></label>
+                <label class="admin-permission"><input type="checkbox" data-perm="expediente"> <span>Expediente: alterar horários de trabalho</span></label>
+                <label class="admin-permission"><input type="checkbox" data-perm="servicos"> <span>Serviços: editar preços, duração e cadastro</span></label>
+                <label class="admin-permission"><input type="checkbox" data-perm="profissionais"> <span>Equipe: cadastrar e editar profissionais</span></label>
+                <label class="admin-permission"><input type="checkbox" data-perm="cupons"> <span>Cupons: administrar campanhas</span></label>
+                <label class="admin-permission"><input type="checkbox" data-perm="vip"> <span>VIP: clientes, pontos, ofertas e resgates</span></label>
+                <label class="admin-permission"><input type="checkbox" data-perm="clientes"> <span>Clientes: consultar e excluir cadastros</span></label>
+                <label class="admin-permission"><input type="checkbox" data-perm="pacotes"> <span>Pacotes: cadastrar e controlar créditos</span></label>
+                <label class="admin-permission"><input type="checkbox" data-perm="recorrencias"> <span>Recorrências: criar e alterar séries em massa</span></label>
+                <label class="admin-permission"><input type="checkbox" data-perm="feriados"> <span>Feriados: cadastrar e liberar datas</span></label>
+                <label class="admin-permission"><input type="checkbox" data-perm="configuracoes"> <span>Configurações e mensagens</span></label>
+                <label class="admin-permission"><input type="checkbox" data-perm="integracoes"> <span>Integrações externas</span></label>
+              </div>
+              <p class="admin-help">O perfil PROFISSIONAL fica vinculado a uma pessoa da equipe. MASTER tem acesso total e pode administrar os usuários.</p>
+              <div class="admin-actions"><button id="saveCollaborator" class="admin-btn primary" type="submit">CRIAR ACESSO ↗</button><button id="cancelCollaboratorEdit" class="admin-btn" type="button" hidden>CANCELAR EDIÇÃO</button></div>
+            </form>
+            <p id="collaboratorMessage" class="admin-note" role="status"></p>
+          </div>
+          <div class="admin-card">
+            <h2>ACESSOS CADASTRADOS</h2>
+            <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>COLABORADOR</th><th>PERFIL</th><th>PROFISSIONAL</th><th>STATUS</th><th>AÇÕES</th></tr></thead><tbody id="collaboratorRows"><tr><td colspan="5">Carregando colaboradores...</td></tr></tbody></table></div>
+          </div>
+        </section>
+
+        <p id="globalMessage" class="admin-note" role="status"></p>
+      </section>
+    </div>
+  </main>
+
+  <dialog id="rescheduleDialog" class="admin-modal">
+    <h2>REMARCAR RESERVA</h2>
+    <p id="rescheduleClient" style="color:#bda996;font-size:12px"></p>
+    <form id="rescheduleForm">
+      <input id="rescheduleId" type="hidden">
+      <label for="reschedulePro">PROFISSIONAL</label><select id="reschedulePro" required></select>
+      <label for="rescheduleDate">NOVA DATA</label><input id="rescheduleDate" type="date" required>
+      <label for="rescheduleTime">NOVO HORÁRIO</label><select id="rescheduleTime" required><option value="">Selecione a data</option></select>
+      <label for="rescheduleDuration">DURAÇÃO DO ATENDIMENTO (MIN)</label><input id="rescheduleDuration" type="number" min="5" max="300" step="5" value="60" required>
+      <menu><button type="button" id="closeReschedule" class="admin-btn">VOLTAR</button><button type="submit" class="admin-btn primary">SALVAR ALTERAÇÃO</button></menu>
+    </form>
+  </dialog>
+
+  <footer class="site-footer">
+    <div class="admin-wrap admin-footer">
+      <span>Painel restrito · Unhas da Simone</span>
+      <span class="admin-support">Dúvidas? Fale com o <a href="https://wa.me/5531983073854" target="_blank" rel="noopener noreferrer">Wendell</a>.</span>
+      <span>Criado por <a href="https://wendellsoares.jor.br" target="_blank" rel="noopener noreferrer">Wendell Soares ↗</a></span>
+    </div>
+  </footer>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+      });
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+  (async () => {
+    'use strict';
+    const SUPABASE_URL = 'https://iszptjpzqicpmzkmogai.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_-m2Hd6qEp76A2LMQwnJrPw_yAH44AVM';
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const $ = (s, root=document) => root.querySelector(s);
+    const $$ = (s, root=document) => [...root.querySelectorAll(s)];
+    const esc = s => String(s ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const today = () => new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+    const money = n => Number(n||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+    const dateBR = s => new Date(s+'T12:00:00-03:00').toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'});
+    const timeBR = s => new Date(s).toLocaleTimeString('pt-BR',{timeZone:'America/Sao_Paulo',hour:'2-digit',minute:'2-digit'});
+    const isoLocal = (date,time) => new Date(`${date}T${time}:00-03:00`).toISOString();
+    const plusMinutes = (iso,mins) => new Date(new Date(iso).getTime()+mins*60000).toISOString();
+    const startDay = d => isoLocal(d,'00:00');
+    const endDay = d => isoLocal(nextDate(d),'00:00');
+    const nextDate = d => {const x=new Date(d+'T12:00:00-03:00');x.setDate(x.getDate()+1);return new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit'}).format(x)};
+    const datePlusDays = (d,n) => {const x=new Date(d+'T12:00:00-03:00');x.setDate(x.getDate()+n);return new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit'}).format(x)};
+    const weekdays = ['DOMINGO','SEGUNDA','TERÇA','QUARTA','QUINTA','SEXTA','SÁBADO'];
+    let professionals=[], services=[], bookings=[], schedules=[], couponCampaigns=[], vipClients=[], vipHours=[], vipOffers=[], vipRewards=[], vipRedemptions=[], customers=[], messageClients=[], collaboratorRows=[], packages=[], packageClients=[], recurrences=[], holidays=[], currentUser=null, currentAdmin=null, rescheduleBooking=null, editingVipClientId=null;
+
+    const permissionKeys=['agenda','agendamento_manual','bloqueios','expediente','servicos','profissionais','cupons','vip','clientes','pacotes','recorrencias','feriados','configuracoes','integracoes'];
+    const roleLabels={MASTER:'MASTER',GERENTE:'GERENTE',RECEPCAO:'RECEPÇÃO',PROFISSIONAL:'PROFISSIONAL',PERSONALIZADO:'PERSONALIZADO'};
+    const rolePresets={
+      GERENTE:Object.fromEntries(permissionKeys.map(k=>[k,true])),
+      RECEPCAO:{agenda:true,agendamento_manual:true,bloqueios:true,clientes:true},
+      PROFISSIONAL:{agenda:true},
+      PERSONALIZADO:{},
+      MASTER:Object.fromEntries(permissionKeys.map(k=>[k,true]))
+    };
+    function can(key){return Boolean(currentAdmin&&(currentAdmin.perfil==='MASTER'||currentAdmin.permissoes?.[key]===true));}
+    function isMaster(){return currentAdmin?.perfil==='MASTER'&&currentAdmin?.ativo===true;}
+    function message(id, text, ok=true){const el=$('#'+id);if(!el)return;el.textContent=text||'';el.classList.toggle('error',!ok);}
+    function fillSelect(id, items, label){const el=$('#'+id);if(!el)return;const old=el.value;el.innerHTML=(label?`<option value="">${esc(label)}</option>`:'')+items.map(x=>`<option value="${esc(x.id)}">${esc(x.nome)}</option>`).join('');if(items.some(x=>String(x.id)===old))el.value=old;}
+    function tab(name){$$('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===name));$$('[data-section]').forEach(s=>s.classList.toggle('active',s.dataset.section===name));}
+    function applyPermissions(){
+      $$('[data-permission]').forEach(el=>{el.hidden=!can(el.dataset.permission);});
+      $$('[data-master-only]').forEach(el=>{el.hidden=!isMaster();});
+      const active=$('[data-tab].active');
+      if(active?.hidden){const first=$$('[data-tab]').find(b=>!b.hidden);if(first)tab(first.dataset.tab);}
+    }
+    async function confirmDelete(label, detail='Esta ação não poderá ser desfeita.'){
+      if(!confirm(`ATENÇÃO: você está prestes a excluir ${label}.\n\n${detail}\n\nDeseja continuar?`))return false;
+      return prompt(`Para confirmar a exclusão de ${label}, digite EXCLUIR:`)==='EXCLUIR';
+    }
+    $$('[data-tab]').forEach(b=>b.addEventListener('click',()=>{if(!b.hidden)tab(b.dataset.tab);}));
+
+    async function rpc(name,args){
+      const {data,error}=await sb.rpc(name,args);
+      if(error)throw new Error(error.message||'Falha na operação.');
+      return data;
+    }
+    async function checkAdmin(){
+      const {data:{user},error:userError}=await sb.auth.getUser();
+      if(userError||!user)return false;
+      const {data,error}=await sb.from('administradores').select('usuario_id,nome,email,perfil,permissoes,ativo,profissional_id').eq('usuario_id',user.id).eq('ativo',true).maybeSingle();
+      if(error)throw error;
+      if(!data)return false;
+      currentUser=user;currentAdmin=data;return true;
+    }
+    async function showPanel(){
+      const ok=await checkAdmin();
+      if(!ok){await sb.auth.signOut();currentAdmin=null;$('#panelArea').hidden=true;$('#loginArea').hidden=false;$('#logoutBtn').hidden=true;throw new Error('Este e-mail não está autorizado ou seu acesso foi suspenso.');}
+      $('#loginArea').hidden=true;$('#panelArea').hidden=false;$('#logoutBtn').hidden=false;$('#loggedEmail').textContent=`${currentAdmin.nome||currentUser.email||'Usuário'} · ${roleLabels[currentAdmin.perfil]||currentAdmin.perfil}`;
+      applyPermissions();
+      await loadBase();
+    }
+    $('#loginForm').addEventListener('submit',async e=>{
+      e.preventDefault();message('loginMessage','Verificando acesso...');
+      const {error}=await sb.auth.signInWithPassword({email:$('#email').value.trim(),password:$('#password').value});
+      if(error){message('loginMessage',error.message==='Invalid login credentials'?'E-mail ou senha incorretos.':error.message,false);return;}
+      try{await showPanel();message('loginMessage','');}catch(err){message('loginMessage',err.message,false);}
+    });
+    $('#forgotPasswordLink').addEventListener('click',async e=>{
+      e.preventDefault();
+      const email=$('#email').value.trim();
+      if(!email){message('loginMessage','Digite seu e-mail no campo acima e clique em “Esqueci minha senha”.',false);$('#email').focus();return;}
+      message('loginMessage','Enviando link de recuperação...');
+      const redirectTo=new URL('recuperar-senha.html',location.href).href;
+      const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo});
+      if(error){message('loginMessage',error.message,false);return;}
+      message('loginMessage','Se o e-mail estiver cadastrado, você receberá um link para criar uma nova senha. Confira também o spam.');
+    });
+    $('#logoutBtn').addEventListener('click',async()=>{await sb.auth.signOut();location.reload();});
+
+    $('#resetTestData').addEventListener('click', async () => {
+      const confirmed = confirm(
+        'ATENÇÃO: isso apagará TODAS as reservas (confirmadas, concluídas, canceladas e ausências) e TODOS os bloqueios. Profissionais, serviços, preços, expediente e logins serão preservados. Deseja continuar?'
+      );
+      if (!confirmed) return;
+
+      const typed = prompt('Para confirmar, digite LIMPAR:');
+      if (typed !== 'LIMPAR') {
+        message('globalMessage', 'Limpeza cancelada. Nenhum dado foi alterado.');
+        return;
+      }
+
+      const button = $('#resetTestData');
+      button.disabled = true;
+      button.textContent = 'LIMPANDO...';
+      message('globalMessage', 'Limpando reservas e bloqueios...');
+      try {
+        const { data, error } = await sb.rpc('alcapone_resetar_testes');
+        if (error) throw error;
+        await loadBase();
+        const reservas = Number(data?.reservas_apagadas ?? 0);
+        const bloqueios = Number(data?.bloqueios_apagados ?? 0);
+        message('globalMessage', `Limpeza concluída: ${reservas} reserva(s) e ${bloqueios} bloqueio(s) removido(s).`);
+      } catch (err) {
+        message('globalMessage', `Não foi possível limpar os dados: ${err.message}`, false);
+      } finally {
+        button.disabled = false;
+        button.textContent = 'LIMPAR DADOS DE TESTE';
+      }
+    });
+
+    async function loadBase(){
+      const [p,s]=await Promise.all([
+        sb.from('profissionais').select('id,nome,ativo').order('nome'),
+        sb.from('servicos').select('id,nome,duracao_minutos,preco,ativo').order('nome')
+      ]);
+      if(p.error)throw p.error;if(s.error)throw s.error;
+      professionals=p.data||[];services=s.data||[];
+      const activePros=professionals.filter(x=>x.ativo);
+      ['bookPro','manualPro','blockPro','hoursPro','reschedulePro','vipHourPro','collaboratorProfessional','recurrencePro'].forEach(id=>fillSelect(id,professionals.filter(x=>x.ativo||id==='bookPro'||id==='reschedulePro'||id==='collaboratorProfessional'),id==='bookPro'?'TODOS':id==='collaboratorProfessional'?'Selecione um profissional':''));
+      fillSelect('manualService',services.filter(x=>x.ativo),'');
+      fillSelect('vipOfferService',services.filter(x=>x.ativo),'TODOS OS SERVIÇOS');
+      $('#statPros').textContent=String(activePros.length).padStart(2,'0');
+      $('#bookDate').value=today();$('#manualDate').value=today();$('#blockDate').value=today();$('#blockFilter').value=today();
+      $('#rescheduleDate').min=today();
+      const tasks=[];
+      if(can('agenda'))tasks.push(loadBookings());
+      if(can('bloqueios'))tasks.push(loadBlocks());
+      if(can('expediente'))tasks.push(loadHours());
+      if(can('servicos'))tasks.push(renderServices());
+      if(can('profissionais'))tasks.push(renderProfessionals());
+      if(can('cupons'))tasks.push(loadCoupons());
+      if(can('vip'))tasks.push(loadVip());
+      if(can('clientes'))tasks.push(loadCustomers());
+      if(can('agendamento_manual'))tasks.push(loadManualAvailability());
+      if(can('pacotes'))tasks.push(loadPackages());
+      if(can('recorrencias'))tasks.push(loadRecurrences());
+      if(can('feriados'))tasks.push(loadHolidays());
+      if(can('configuracoes'))tasks.push(loadSettings());
+      if(can('integracoes'))tasks.push(loadCalendarIntegration());
+      if(isMaster())tasks.push(loadCollaborators());
+      await Promise.all(tasks);
+    }
+    $('#refreshAll').addEventListener('click',async()=>{try{await loadBase();message('globalMessage','Dados atualizados.');}catch(e){message('globalMessage',e.message,false);}});
+    $('#reloadBookings').addEventListener('click',loadBookings);
+    $('#bookDate').addEventListener('change',loadBookings);$('#bookPro').addEventListener('change',loadBookings);
+    $('#exportDayCalendar').addEventListener('click',()=>{
+      const stamp=d=>new Date(d).toISOString().replace(/[-:]/g,'').replace(/\.\d{3}Z$/,'Z');
+      const escIcs=v=>String(v||'').replace(/\\/g,'\\\\').replace(/,/g,'\\,').replace(/;/g,'\\;').replace(/\n/g,'\\n');
+      const events=bookings.filter(b=>['agendado','confirmado'].includes(b.status)).map(b=>{
+        const s=services.find(x=>x.id===b.servico_id);
+        return ['BEGIN:VEVENT',`UID:${b.id}@unhasdasimone`,`DTSTAMP:${stamp(new Date())}`,`DTSTART:${stamp(b.inicio)}`,`DTEND:${stamp(b.fim)}`,`SUMMARY:${escIcs(`${b.cliente_nome} — ${s?.nome||'Atendimento'}`)}`,`DESCRIPTION:${escIcs(`WhatsApp: ${b.cliente_whatsapp||''}\\nUnhas da Simone`)}`,'END:VEVENT'].join('\r\n');
+      });
+      if(!events.length){message('globalMessage','Não há atendimentos agendados nesta data para exportar.',false);return;}
+      const content=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Unhas da Simone//Agenda//PT-BR','CALSCALE:GREGORIAN',...events,'END:VCALENDAR'].join('\r\n');
+      const url=URL.createObjectURL(new Blob([content],{type:'text/calendar;charset=utf-8'}));
+      const a=document.createElement('a');a.href=url;a.download=`unhas-da-simone-${$('#bookDate').value||today()}.ics`;a.click();URL.revokeObjectURL(url);
+    });
+
+    async function loadBookings(){
+      const date=$('#bookDate').value||today();const from=startDay(date),to=endDay(date);
+      let q=sb.from('reservas').select('*').gte('inicio',from).lt('inicio',to).order('inicio');
+      if($('#bookPro').value)q=q.eq('profissional_id',$('#bookPro').value);
+      const {data,error}=await q;if(error)throw error;
+      bookings=data||[];
+      const proMap=new Map(professionals.map(x=>[x.id,x.nome])),serviceMap=new Map(services.map(x=>[x.id,x]));
+      const confirmed=bookings.filter(x=>['agendado','confirmado'].includes(x.status));
+      const revenue=confirmed.reduce((sum,b)=>sum+Number(b.valor_final ?? serviceMap.get(b.servico_id)?.preco ?? 0),0);
+      $('#statToday').textContent=String(bookings.filter(x=>x.inicio>=startDay(today())&&x.inicio<endDay(today())).length).padStart(2,'0');
+      $('#statConfirmed').textContent=String(confirmed.length).padStart(2,'0');
+      $('#dayCount').textContent=String(bookings.length).padStart(2,'0');
+      $('#dayRevenue').textContent=money(revenue);
+      $('#bookRows').innerHTML=bookings.map(b=>{
+        const s=serviceMap.get(b.servico_id)||{},p=proMap.get(b.profissional_id)||'—';
+        const status=b.status;const statusLabel=status==='agendado'?'AGENDADO':status==='faltou'?'FALTOU':status.toUpperCase();
+        const actions=`<div class="admin-actions">${['agendado','confirmado'].includes(status)?`<button class="admin-btn small" data-act="done" data-id="${b.id}">CONCLUIR</button><button class="admin-btn small" data-act="absent" data-id="${b.id}">FALTA</button><button class="admin-btn small" data-act="move" data-id="${b.id}">REMARCAR</button><button class="admin-btn small danger" data-act="cancel" data-id="${b.id}">CANCELAR</button>`:''}<button class="admin-btn small danger" data-act="delete" data-id="${b.id}">EXCLUIR</button></div>`;
+        const finalValue=b.valor_final==null?Number(s.preco||0):Number(b.valor_final);
+        const priceDetail=Number(b.desconto||0)>0?`De ${money(s.preco)} · ${b.cupom_codigo?'cupom '+esc(b.cupom_codigo):Number(b.vip_desconto||0)>0?'benefício VIP':'desconto'}`:`${b.duracao_minutos||s.duracao_minutos||60} min`;
+        return `<tr><td data-label="HORÁRIO"><strong>${dateBR(date)}</strong><small>${timeBR(b.inicio)}–${timeBR(b.fim)}</small></td><td data-label="CLIENTE"><strong>${esc(b.cliente_nome)}</strong><small>${esc(b.cliente_whatsapp)}${b.cliente_email?' · '+esc(b.cliente_email):''}${b.cliente_vip_id?`<br><strong style="color:#d9ad7c">CLIENTE VIP · ${esc(b.vip_codigo||'')}</strong>`:''}</small></td><td data-label="PROFISSIONAL">${esc(p)}</td><td data-label="SERVIÇO">${esc(s.nome||'—')}<small>${b.duracao_minutos||s.duracao_minutos||60} min</small><strong>${money(finalValue)}</strong><small>${priceDetail}</small></td><td data-label="STATUS"><span class="admin-chip ${esc(status)}">${esc(statusLabel)}</span></td><td data-label="AÇÕES">${actions}</td></tr>`;
+      }).join('')||'<tr><td colspan="6">Nenhuma reserva encontrada nesta data.</td></tr>';
+      $$('[data-act]', $('#bookRows')).forEach(btn=>btn.addEventListener('click',()=>bookingAction(btn.dataset.act,btn.dataset.id)));
+      await loadUpcoming();
+    }
+    async function loadUpcoming(){
+      const target=$('#upcomingAppointments');if(!target)return;
+      try{
+        let q=sb.from('reservas').select('id,inicio,fim,cliente_nome,cliente_whatsapp,servico_id,profissional_id,status,duracao_minutos')
+          .gte('inicio',new Date().toISOString()).in('status',['agendado','confirmado']).order('inicio').limit(6);
+        if(currentAdmin?.perfil==='PROFISSIONAL'&&currentAdmin.profissional_id)q=q.eq('profissional_id',currentAdmin.profissional_id);
+        const {data,error}=await q;if(error)throw error;
+        const serviceMap=new Map(services.map(x=>[x.id,x.nome]));
+        const proMap=new Map(professionals.map(x=>[x.id,x.nome]));
+        target.innerHTML=(data||[]).map(b=>`<div class="admin-list-item"><div><strong>${new Date(b.inicio).toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'})===new Date().toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'})?'HOJE':new Date(b.inicio).toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'})} · ${timeBR(b.inicio)}</strong><br>${esc(b.cliente_nome)} · ${esc(serviceMap.get(b.servico_id)||'Atendimento')}<br><small>${esc(proMap.get(b.profissional_id)||'Profissional')} · ${Number(b.duracao_minutos||60)} min</small></div><span class="admin-chip">AGENDADO</span></div>`).join('')||'<p>Nenhum próximo atendimento.</p>';
+      }catch(e){target.innerHTML=`<p>Não foi possível carregar os próximos atendimentos: ${esc(e.message)}</p>`;}
+    }
+    async function bookingAction(action,id){
+      const b=bookings.find(x=>x.id===id);if(!b)return;
+      if(action==='move'){openReschedule(b);return;}
+      if(action==='delete'){
+        if(!await confirmDelete(`a reserva de ${b.cliente_nome}`, 'A reserva será apagada definitivamente. O registro deixa de aparecer na agenda e no histórico de utilizações do cupom.'))return;
+        let devolverCredito=false;
+        if(b.pacote_id&&b.pacote_credito_reservado){
+          devolverCredito=confirm('A cliente avisou com antecedência?\n\nOK = devolver 1 crédito ao pacote.\nCancelar = não devolver o crédito.');
+          const {error:flagError}=await sb.from('reservas').update({devolver_credito_pacote:devolverCredito}).eq('id',id);
+          if(flagError){message('globalMessage',flagError.message,false);return;}
+        }
+        const {error}=await sb.from('reservas').delete().eq('id',id);
+        if(error){message('globalMessage',error.message,false);return;}
+        message('globalMessage',`Reserva excluída definitivamente.${devolverCredito?' Crédito devolvido ao pacote.':''}`);await loadBookings();if(can('vip'))await loadVip();if(can('clientes'))await loadCustomers();if(can('pacotes'))await loadPackages();return;
+      }
+      const status={done:'concluido',absent:'faltou',cancel:'cancelado'}[action];
+      const labels={concluido:'concluir este atendimento',faltou:'marcar falta',cancelado:'cancelar esta reserva'};
+      if(!confirm(`Deseja ${labels[status]}?`))return;
+      let devolver_credito_pacote=false;
+      if(status==='cancelado'&&b.pacote_id&&b.pacote_credito_reservado){
+        devolver_credito_pacote=confirm('A cliente avisou com antecedência?\n\nOK = devolver 1 crédito ao pacote.\nCancelar = não devolver o crédito.');
+      }
+      const {error}=await sb.from('reservas').update({status,devolver_credito_pacote}).eq('id',id);
+      if(error){message('globalMessage',error.message,false);return;}
+      message('globalMessage','Status atualizado.');await loadBookings();if(status==='concluido')await loadVip();
+    }
+
+    async function loadManualAvailability(){
+      const pro=$('#manualPro').value,service=$('#manualService').value,date=$('#manualDate').value,el=$('#manualTime');
+      if(!pro||!service||!date){el.innerHTML='<option value="">Selecione profissional, serviço e data</option>';return;}
+      el.innerHTML='<option value="">CONSULTANDO...</option>';
+      try{const slots=await rpc('alcapone_disponibilidade',{p_profissional_id:pro,p_servico_id:service,p_data:date,p_codigo_vip:$('#manualVipCode').value.trim().toUpperCase()||null,p_whatsapp:$('#manualPhone').value.trim()||null,p_duracao_minutos:Number($('#manualDuration').value||60)});el.innerHTML=(slots||[]).map(x=>`<option value="${esc(x.hora)}">${esc(x.hora)}${x.vip_exclusivo?' · VIP':''}</option>`).join('')||'<option value="">SEM HORÁRIOS DISPONÍVEIS</option>';}
+      catch(e){el.innerHTML='<option value="">ERRO AO CONSULTAR</option>';message('manualResult',e.message,false);}
+    }
+    ['manualPro','manualService','manualDate','manualPhone','manualVipCode','manualDuration'].forEach(id=>$('#'+id).addEventListener('change',loadManualAvailability));
+    $('#manualDate').addEventListener('change',updateManualPackageOptions);
+    $('#manualPhone').addEventListener('input',updateManualPackageOptions);
+    $('#manualForm').addEventListener('submit',async e=>{
+      e.preventDefault();message('manualResult','Registrando...');
+      try{
+        if(!$('#manualConsent').checked)throw new Error('Confirme a autorização do cliente.');
+        const data=await rpc('alcapone_agendar_manual',{
+          p_profissional_id:$('#manualPro').value,p_servico_id:$('#manualService').value,p_data:$('#manualDate').value,
+          p_hora:$('#manualTime').value,p_nome:$('#manualName').value.trim(),p_whatsapp:$('#manualPhone').value.trim(),
+          p_email:$('#manualEmail').value.trim()||null,p_observacoes:$('#manualNotes').value.trim()||null,p_cupom:null,p_codigo_vip:$('#manualVipCode').value.trim().toUpperCase()||null,p_duracao_minutos:Number($('#manualDuration').value||60),p_pacote_id:$('#manualPackage').value||null
+        });
+        message('manualResult',`Reserva ${data.code} registrada. Envie a confirmação ao cliente pelo WhatsApp.`);
+        const phone=$('#manualPhone').value.replace(/\D/g,'');
+        const template=confirmationTemplate||'Olá, {{nome}}! Seu horário no Unhas da Simone está confirmado para {{data}} às {{hora}}, para {{servico}}.';
+        const text=template.replace(/\{\{nome\}\}/g,$('#manualName').value.trim())
+          .replace(/\{\{data\}\}/g,dateBR($('#manualDate').value))
+          .replace(/\{\{hora\}\}/g,$('#manualTime').value)
+          .replace(/\{\{servico\}\}/g,data.service||'atendimento')
+          .replace(/\{\{profissional\}\}/g,data.professional||'Simone Jorge');
+        const wa=`https://wa.me/55${phone}?text=${encodeURIComponent(text)}`;
+        $('#manualResult').insertAdjacentHTML('beforeend',` <a href="${wa}" target="_blank" rel="noopener noreferrer" style="color:#e5b27f;text-decoration:underline">ABRIR WHATSAPP ↗</a>`);
+        e.target.reset();$('#manualDate').value=today();await loadManualAvailability();await loadBookings();
+      }catch(err){message('manualResult',err.message,false);}
+    });
+
+    async function loadBlocks(){
+      const date=$('#blockFilter').value||today(),from=startDay(date),to=endDay(date);
+      const {data,error}=await sb.from('bloqueios').select('*').gte('inicio',from).lt('inicio',to).order('inicio');
+      if(error)throw error;
+      const proMap=new Map(professionals.map(x=>[x.id,x.nome]));
+      $('#blockList').innerHTML=(data||[]).map(b=>`<div class="admin-list-item"><div><strong>${esc(proMap.get(b.profissional_id)||'—')}</strong><br>${dateBR(date)} · ${timeBR(b.inicio)}–${timeBR(b.fim)}<br><small>${esc(b.motivo||'Sem motivo informado')}</small></div><button class="admin-btn small danger" type="button" data-unblock="${b.id}">REMOVER</button></div>`).join('')||'<p>Nenhum bloqueio nesta data.</p>';
+      $$('[data-unblock]', $('#blockList')).forEach(btn=>btn.addEventListener('click',async()=>{
+        if(!await confirmDelete('este bloqueio de horário'))return;
+        const {error}=await sb.from('bloqueios').delete().eq('id',btn.dataset.unblock);
+        if(error){message('blockMessage',error.message,false);return;}
+        message('blockMessage','Bloqueio removido.');await loadBlocks();
+      }));
+    }
+    $('#reloadBlocks').addEventListener('click',loadBlocks);$('#blockFilter').addEventListener('change',loadBlocks);
+    $('#blockForm').addEventListener('submit',async e=>{
+      e.preventDefault();message('blockMessage','Salvando bloqueio...');
+      try{
+        const pro=$('#blockPro').value,date=$('#blockDate').value,start=$('#blockStart').value,end=$('#blockEnd').value;
+        if(end<=start)throw new Error('O horário final precisa ser posterior ao inicial.');
+        const startIso=isoLocal(date,start),endIso=isoLocal(date,end);
+        const {data:overlaps,error:overlapError}=await sb.from('reservas').select('id').eq('profissional_id',pro) .in('status',['agendado','confirmado']).lt('inicio',endIso).gt('fim',startIso);
+        if(overlapError)throw overlapError;
+        if(overlaps?.length)throw new Error('Há reserva confirmada nesse período. Trate a reserva antes de bloquear.');
+        const {error}=await sb.from('bloqueios').insert({profissional_id:pro,inicio:startIso,fim:endIso,motivo:$('#blockReason').value.trim()||null});
+        if(error)throw error;
+        message('blockMessage','Período bloqueado.');e.target.reset();$('#blockDate').value=today();$('#blockStart').value='12:00';$('#blockEnd').value='13:00';await loadBlocks();
+      }catch(err){message('blockMessage',err.message,false);}
+    });
+
+    async function loadHours(){
+      const {data,error}=await sb.from('horarios_semanais').select('*').eq('profissional_id',$('#hoursPro').value).order('dia_semana');
+      if(error)throw error;schedules=data||[];renderHours();
+    }
+    function renderHours(){
+      const rows=Array.from({length:7},(_,day)=>{
+        const row=schedules.find(x=>x.dia_semana===day);
+        return `<div class="admin-hours-row" data-day="${day}"><strong>${weekdays[day]}</strong><label class="admin-check"><input class="dayEnabled" type="checkbox" ${row?'checked':''}> ABERTO</label><input class="dayStart" type="time" value="${row?String(row.inicio).slice(0,5):'09:00'}" aria-label="Início"><input class="dayEnd" type="time" value="${row?String(row.fim).slice(0,5):'18:00'}" aria-label="Fim"></div>`;
+      }).join('');
+      $('#hoursRows').innerHTML=rows;
+    }
+    $('#hoursPro').addEventListener('change',loadHours);
+    $('#saveHours').addEventListener('click',async()=>{
+      message('hoursMessage','Salvando expediente...');
+      try{
+        const pro=$('#hoursPro').value;
+        for(const row of $$('.admin-hours-row')){
+          const day=Number(row.dataset.day),enabled=$('.dayEnabled',row).checked,start=$('.dayStart',row).value,end=$('.dayEnd',row).value;
+          const {error:delError}=await sb.from('horarios_semanais').delete().eq('profissional_id',pro).eq('dia_semana',day);
+          if(delError)throw delError;
+          if(enabled){
+            if(end<=start)throw new Error(`Horário inválido em ${weekdays[day]}.`);
+            const {error:insError}=await sb.from('horarios_semanais').insert({profissional_id:pro,dia_semana:day,inicio:start,fim:end});
+            if(insError)throw insError;
+          }
+        }
+        message('hoursMessage','Expediente salvo.');await loadHours();
+      }catch(err){message('hoursMessage',err.message,false);}
+    });
+
+    async function renderServices(){
+      $('#servicesEditor').innerHTML=services.map(s=>`<div class="admin-service-row" data-service="${s.id}">
+        <div><label>NOME</label><input class="serviceName" maxlength="120" value="${esc(s.nome)}"></div>
+        <div><label>DURAÇÃO (MIN)</label><input class="serviceDuration" type="number" min="10" max="300" step="5" value="${s.duracao_minutos||60}"></div>
+        <div><label>PREÇO (R$)</label><input class="servicePrice" type="number" min="0" step="0.01" value="${Number(s.preco).toFixed(2)}"></div>
+        <div><label class="admin-check"><input class="serviceActive" type="checkbox" ${s.ativo?'checked':''}> ATIVO</label></div>
+        <button type="button" class="admin-btn small saveService">SALVAR</button>
+        <button type="button" class="admin-btn small danger deleteService">EXCLUIR</button>
+      </div>`).join('')||'<p>Nenhum serviço cadastrado.</p>';
+      $$('.saveService').forEach(btn=>btn.addEventListener('click',async()=>{
+        const row=btn.closest('[data-service]');message('servicesMessage','Salvando serviço...');
+        const payload={nome:$('.serviceName',row).value.trim(),duracao_minutos:Number($('.serviceDuration',row).value||60),preco:Number($('.servicePrice',row).value),ativo:$('.serviceActive',row).checked};
+        if(!payload.nome||payload.duracao_minutos<5||payload.duracao_minutos>300||payload.preco<0){message('servicesMessage','Confira nome, duração e preço.',false);return;}
+        const {error}=await sb.from('servicos').update(payload).eq('id',row.dataset.service);
+        if(error){message('servicesMessage',error.message,false);return;}
+        message('servicesMessage','Serviço atualizado.');await loadBase();
+      }));
+      $$('.deleteService').forEach(btn=>btn.addEventListener('click',async()=>{
+        const id=btn.closest('[data-service]').dataset.service,s=services.find(x=>x.id===id);if(!s)return;
+        if(!await confirmDelete(`o serviço ${s.nome}`,'Se houver reservas vinculadas, a exclusão será bloqueada para preservar o histórico. Você poderá desativar o serviço.'))return;
+        try{await rpc('alcapone_excluir_servico',{p_id:id});message('servicesMessage',`Serviço ${s.nome} excluído.`);await loadBase();}
+        catch(err){message('servicesMessage',err.message,false);}
+      }));
+    }
+
+    function resetServiceForm(){
+      $('#serviceForm').reset();$('#serviceEditId').value='';$('#serviceNewDuration').value='60';$('#serviceNewActive').checked=true;
+      $('#saveNewService').textContent='CADASTRAR SERVIÇO ↗';$('#cancelServiceEdit').hidden=true;
+    }
+    $('#serviceForm').addEventListener('submit',async e=>{
+      e.preventDefault();
+      const id=$('#serviceEditId').value;
+      const payload={nome:$('#serviceNewName').value.trim(),duracao_minutos:Number($('#serviceNewDuration').value||60),preco:Number($('#serviceNewPrice').value),ativo:$('#serviceNewActive').checked};
+      if(!payload.nome||payload.duracao_minutos<10||payload.duracao_minutos>300||payload.preco<0){message('servicesMessage','Confira nome, duração e preço.',false);return;}
+      const result=id?await sb.from('servicos').update(payload).eq('id',id):await sb.from('servicos').insert(payload);
+      if(result.error){message('servicesMessage',result.error.message,false);return;}
+      resetServiceForm();message('servicesMessage',id?'Serviço atualizado.':'Serviço cadastrado.');
+      const {data,error}=await sb.from('servicos').select('id,nome,duracao_minutos,preco,ativo').order('nome');if(error){message('servicesMessage',error.message,false);return;}services=data||[];await loadBase();
+    });
+    $('#cancelServiceEdit').addEventListener('click',()=>{resetServiceForm();message('servicesMessage','Edição cancelada.');});
+
+    async function renderProfessionals(){
+      $('#professionalRows').innerHTML=professionals.map(pro=>`<tr><td data-label="NOME"><strong>${esc(pro.nome)}</strong></td><td data-label="STATUS"><span class="admin-chip">${pro.ativo?'ATIVO':'INATIVO'}</span></td><td data-label="AÇÕES"><div class="admin-actions"><button type="button" class="admin-btn small" data-prof-edit="${pro.id}">EDITAR</button><button type="button" class="admin-btn small ${pro.ativo?'danger':''}" data-prof-toggle="${pro.id}">${pro.ativo?'DESATIVAR':'ATIVAR'}</button><button type="button" class="admin-btn small danger" data-prof-delete="${pro.id}">EXCLUIR</button></div></td></tr>`).join('')||'<tr><td colspan="3">Nenhum profissional cadastrado.</td></tr>';
+      $$('[data-prof-edit]').forEach(btn=>btn.addEventListener('click',()=>{const pro=professionals.find(x=>x.id===btn.dataset.profEdit);if(!pro)return;$('#professionalEditId').value=pro.id;$('#professionalName').value=pro.nome;$('#professionalActive').checked=pro.ativo;$('#saveProfessional').textContent='SALVAR ALTERAÇÕES ↗';$('#cancelProfessionalEdit').hidden=false;$('#professionalForm').scrollIntoView({behavior:'smooth',block:'start'});}));
+      $$('[data-prof-toggle]').forEach(btn=>btn.addEventListener('click',async()=>{const pro=professionals.find(x=>x.id===btn.dataset.profToggle);if(!pro)return;const {error}=await sb.from('profissionais').update({ativo:!pro.ativo}).eq('id',pro.id);if(error){message('professionalMessage',error.message,false);return;}message('professionalMessage',`Profissional ${pro.ativo?'desativado':'ativado'}.`);await loadBase();}));
+      $$('[data-prof-delete]').forEach(btn=>btn.addEventListener('click',async()=>{const pro=professionals.find(x=>x.id===btn.dataset.profDelete);if(!pro)return;if(!await confirmDelete(`o profissional ${pro.nome}`,'Se houver reservas, bloqueios ou expediente vinculado, a exclusão será bloqueada. Desative o profissional para preservar o histórico.'))return;try{await rpc('alcapone_excluir_profissional',{p_id:pro.id});message('professionalMessage',`Profissional ${pro.nome} excluído.`);await loadBase();}catch(err){message('professionalMessage',err.message,false);}}));
+    }
+    function resetProfessionalForm(){ $('#professionalForm').reset();$('#professionalEditId').value='';$('#professionalActive').checked=true;$('#saveProfessional').textContent='CADASTRAR PROFISSIONAL ↗';$('#cancelProfessionalEdit').hidden=true; }
+    $('#professionalForm').addEventListener('submit',async e=>{e.preventDefault();const id=$('#professionalEditId').value,payload={nome:$('#professionalName').value.trim(),ativo:$('#professionalActive').checked};if(payload.nome.length<2){message('professionalMessage','Informe o nome do profissional.',false);return;}const result=id?await sb.from('profissionais').update(payload).eq('id',id):await sb.from('profissionais').insert(payload);if(result.error){message('professionalMessage',result.error.message,false);return;}resetProfessionalForm();message('professionalMessage',id?'Profissional atualizado.':'Profissional cadastrado.');await loadBase();});
+    $('#cancelProfessionalEdit').addEventListener('click',()=>{resetProfessionalForm();message('professionalMessage','Edição cancelada.');});
+
+    let editingCouponId=null;
+    function resetCouponForm(){
+      $('#couponForm').reset();
+      editingCouponId=null;
+      $('#couponId').value='';
+      $('#couponActive').checked=true;
+      $('#couponMaxUses').value='50';
+      $('#couponMaxPerClient').value='1';
+      $('#couponStart').value=today();
+      $('#couponEnd').value=today();
+      $('#saveCoupon').textContent='CRIAR CAMPANHA ↗';
+      $('#cancelCouponEdit').hidden=true;
+    }
+    function couponStatus(c,used){
+      if(!c.ativo)return 'PAUSADA';
+      if(today()<c.data_inicio)return 'PROGRAMADA';
+      if(today()>c.data_fim)return 'ENCERRADA';
+      if(used>=Number(c.max_utilizacoes))return 'ESGOTADA';
+      return 'ATIVA';
+    }
+    async function loadCoupons(){
+      const campaignResult=await sb.from('alcapone_campanhas_cupom').select('*').order('criado_em',{ascending:false});
+      if(campaignResult.error)throw campaignResult.error;
+      couponCampaigns=campaignResult.data||[];
+      const usageCounts=await Promise.all(couponCampaigns.map(c=>
+        sb.from('alcapone_cupons_utilizados').select('id',{count:'exact',head:true}).eq('campanha_id',c.id)
+      ));
+      const counts=new Map();
+      usageCounts.forEach((result,index)=>{
+        if(result.error)throw result.error;
+        counts.set(couponCampaigns[index].id,result.count||0);
+      });
+      $('#couponRows').innerHTML=couponCampaigns.map(c=>{
+        const used=counts.get(c.id)||0, status=couponStatus(c,used);
+        const discount=c.tipo_desconto==='percentual'?`${Number(c.valor_desconto).toLocaleString('pt-BR')}%`:`${money(c.valor_desconto)}`;
+        const actions=`<div class="admin-actions"><button class="admin-btn small" type="button" data-edit-coupon="${c.id}">EDITAR</button><button class="admin-btn small ${c.ativo?'danger':''}" type="button" data-toggle-coupon="${c.id}">${c.ativo?'PAUSAR':'ATIVAR'}</button><button class="admin-btn small danger" type="button" data-delete-coupon="${c.id}">EXCLUIR</button></div>`;
+        return `<tr><td data-label="CAMPANHA"><strong>${esc(c.nome)}</strong><small>Até ${c.max_por_cliente} uso(s) por cliente</small></td><td data-label="CÓDIGO"><strong>${esc(c.codigo)}</strong></td><td data-label="DESCONTO">${esc(discount)}</td><td data-label="PERÍODO">${dateBR(c.data_inicio)}<small>até ${dateBR(c.data_fim)}</small></td><td data-label="UTILIZAÇÕES">${used} / ${c.max_utilizacoes}</td><td data-label="STATUS"><span class="admin-chip">${status}</span></td><td data-label="AÇÕES">${actions}</td></tr>`;
+      }).join('')||'<tr><td colspan="7">Nenhuma campanha cadastrada.</td></tr>';
+      $$('[data-edit-coupon]').forEach(btn=>btn.addEventListener('click',()=>{
+        const c=couponCampaigns.find(item=>item.id===btn.dataset.editCoupon);if(!c)return;
+        editingCouponId=c.id;$('#couponId').value=c.id;$('#couponName').value=c.nome;$('#couponCode').value=c.codigo;
+        $('#couponType').value=c.tipo_desconto;$('#couponValue').value=Number(c.valor_desconto).toFixed(2);
+        $('#couponStart').value=c.data_inicio;$('#couponEnd').value=c.data_fim;
+        $('#couponMaxUses').value=c.max_utilizacoes;$('#couponMaxPerClient').value=c.max_por_cliente;$('#couponActive').checked=c.ativo;
+        $('#saveCoupon').textContent='SALVAR ALTERAÇÕES ↗';$('#cancelCouponEdit').hidden=false;
+        $('#couponForm').scrollIntoView({behavior:'smooth',block:'start'});
+        message('couponMessage',`Editando a campanha ${c.nome}.`);
+      }));
+      $$('[data-toggle-coupon]').forEach(btn=>btn.addEventListener('click',async()=>{
+        const c=couponCampaigns.find(item=>item.id===btn.dataset.toggleCoupon);if(!c)return;
+        const {error}=await sb.from('alcapone_campanhas_cupom').update({ativo:!c.ativo}).eq('id',c.id);
+        if(error){message('couponMessage',error.message,false);return;}
+        message('couponMessage',`Campanha ${c.ativo?'pausada':'ativada'}.`);await loadCoupons();
+      }));
+      $$('[data-delete-coupon]').forEach(btn=>btn.addEventListener('click',async()=>{
+        const c=couponCampaigns.find(item=>item.id===btn.dataset.deleteCoupon);if(!c)return;
+        if(!await confirmDelete(`a campanha ${c.nome}`,'Campanhas com utilizações registradas não podem ser apagadas; pause-as para manter o histórico.'))return;
+        try{await rpc('alcapone_excluir_campanha_cupom',{p_id:c.id});message('couponMessage',`Campanha ${c.nome} excluída.`);await loadCoupons();}
+        catch(err){message('couponMessage',err.message,false);}
+      }));
+    }
+    $('#couponType').addEventListener('change',()=>{
+      $('#couponValue').max=$('#couponType').value==='percentual'?'100':'';
+      $('#couponValue').placeholder=$('#couponType').value==='percentual'?'Ex.: 15':'Ex.: 10,00';
+    });
+    $('#couponCode').addEventListener('input',()=>{$('#couponCode').value=$('#couponCode').value.toUpperCase().replace(/[^A-Z0-9_-]/g,'');});
+    $('#cancelCouponEdit').addEventListener('click',()=>{resetCouponForm();message('couponMessage','Edição cancelada.');});
+    $('#couponForm').addEventListener('submit',async e=>{
+      e.preventDefault();message('couponMessage','Salvando campanha...');
+      const payload={
+        nome:$('#couponName').value.trim(),codigo:$('#couponCode').value.trim().toUpperCase(),
+        tipo_desconto:$('#couponType').value,valor_desconto:Number($('#couponValue').value),
+        data_inicio:$('#couponStart').value,data_fim:$('#couponEnd').value,
+        max_utilizacoes:Number($('#couponMaxUses').value),max_por_cliente:Number($('#couponMaxPerClient').value),
+        ativo:$('#couponActive').checked
+      };
+      if(!payload.nome||!/^[A-Z0-9_-]{3,30}$/.test(payload.codigo)){message('couponMessage','Informe um nome e um código de 3 a 30 caracteres (letras, números, hífen ou sublinhado).',false);return;}
+      if(!payload.data_inicio||!payload.data_fim||payload.data_fim<payload.data_inicio){message('couponMessage','Confira o período da campanha.',false);return;}
+      if(!Number.isFinite(payload.valor_desconto)||payload.valor_desconto<=0||(payload.tipo_desconto==='percentual'&&payload.valor_desconto>100)){message('couponMessage','Confira o valor do desconto. Percentuais devem ser de até 100%.',false);return;}
+      if(!Number.isInteger(payload.max_utilizacoes)||payload.max_utilizacoes<1||!Number.isInteger(payload.max_por_cliente)||payload.max_por_cliente<1){message('couponMessage','Informe limites de utilização válidos.',false);return;}
+      try{
+        const wasEditing=Boolean(editingCouponId);
+        const result=wasEditing
+          ? await sb.from('alcapone_campanhas_cupom').update(payload).eq('id',editingCouponId)
+          : await sb.from('alcapone_campanhas_cupom').insert(payload);
+        if(result.error)throw result.error;
+        resetCouponForm();message('couponMessage',wasEditing?'Campanha atualizada.':'Campanha criada.');
+        await loadCoupons();
+      }catch(err){message('couponMessage',err.message.includes('duplicate key')?'Este código já está cadastrado. Escolha outro.':err.message,false);}
+    });
+
+    const normalizePhone=value=>{let d=String(value||'').replace(/\D/g,'');if((d.length===12||d.length===13)&&d.startsWith('55'))d=d.slice(2);return d;};
+    const vipCode=()=>{const bytes=new Uint8Array(5);crypto.getRandomValues(bytes);return 'VIP-'+[...bytes].map(x=>x.toString(16).padStart(2,'0')).join('').toUpperCase();};
+    function resetVipClientForm(){
+      $('#vipClientForm').reset();editingVipClientId=null;$('#vipClientId').value='';$('#vipClientActive').checked=true;
+      $('#vipDiscountType').value='nenhum';$('#vipDiscountValue').value='0';$('#vipClientLevel').value='Bronze';$('#vipClientBirthday').value='';$('#vipClientCode').value=vipCode();
+      $('#saveVipClient').textContent='CADASTRAR CLIENTE VIP ↗';$('#cancelVipClientEdit').hidden=true;
+    }
+    function vipDiscountLabel(type,value){if(type==='percentual')return `${Number(value).toLocaleString('pt-BR')}%`;if(type==='fixo')return money(value);return '—';}
+    async function loadVip(){
+      const [clientsResult,pointsResult,hoursResult,offersResult,rewardsResult,redemptionsResult,configResult,messageClientsResult]=await Promise.all([
+        sb.from('alcapone_clientes_vip').select('*').order('criado_em',{ascending:false}),
+        sb.from('alcapone_vip_pontos').select('cliente_vip_id,pontos'),
+        sb.from('alcapone_vip_horarios').select('*').order('data').order('hora_inicio'),
+        sb.from('alcapone_vip_ofertas').select('*').order('criado_em',{ascending:false}),
+        sb.from('alcapone_vip_recompensas').select('*').order('pontos_necessarios'),
+        sb.from('alcapone_vip_resgates').select('*').order('solicitado_em',{ascending:false}),
+        sb.from('alcapone_vip_pontos_config').select('*').eq('id',true).maybeSingle(),
+        sb.from('clientes').select('id,nome,whatsapp,whatsapp_normalizado').eq('ativo',true).order('nome')
+      ]);
+      for(const result of [clientsResult,pointsResult,hoursResult,offersResult,rewardsResult,redemptionsResult,configResult])if(result.error)throw result.error;
+      if(messageClientsResult.error)throw messageClientsResult.error;
+      messageClients=messageClientsResult.data||[];
+      vipClients=clientsResult.data||[];vipHours=hoursResult.data||[];vipOffers=offersResult.data||[];vipRewards=rewardsResult.data||[];vipRedemptions=redemptionsResult.data||[];
+      const balances=new Map();(pointsResult.data||[]).forEach(row=>balances.set(row.cliente_vip_id,(balances.get(row.cliente_vip_id)||0)+Number(row.pontos||0)));
+      const reserved=new Map();vipRedemptions.filter(r=>['solicitado','aprovado'].includes(r.status)).forEach(row=>reserved.set(row.cliente_vip_id,(reserved.get(row.cliente_vip_id)||0)+Number(row.pontos_necessarios||0)));
+      $('#vipClientRows').innerHTML=vipClients.map(c=>{
+        const points=balances.get(c.id)||0,available=points-(reserved.get(c.id)||0);
+        return `<tr><td data-label="CLIENTE / OBSERVAÇÃO"><strong>${esc(c.nome)}</strong><small>${esc(c.observacoes||'Sem observações')}</small></td><td data-label="WHATSAPP">${esc(c.whatsapp)}</td><td data-label="NÍVEL VIP"><span class="vip-level-chip level-${String(c.nivel_vip||'Bronze').toLowerCase()}">${esc(c.nivel_vip||'Bronze')}</span></td><td data-label="ANIVERSÁRIO">${c.data_aniversario?dateBR(c.data_aniversario):'—'}</td><td data-label="CÓDIGO"><strong>${esc(c.codigo)}</strong></td><td data-label="DESCONTO">${esc(vipDiscountLabel(c.desconto_tipo,c.desconto_valor))}</td><td data-label="PONTOS"><strong>${points}</strong><small>${available} disponíveis</small></td><td data-label="STATUS"><span class="admin-chip">${c.ativo?'ATIVO':'SUSPENSO'}</span></td><td data-label="AÇÕES"><div class="admin-actions"><a class="admin-btn small" href="https://wa.me/55${esc(c.whatsapp_normalizado)}?text=${encodeURIComponent(`Olá, ${c.nome}! Seu acesso VIP da Unhas da Simone está liberado.
+
+Código: ${c.codigo}
+Use este código junto com o WhatsApp cadastrado ao acessar o agendamento: ${new URL('index.html',location.href).href}
+
+Seus benefícios e pontos estarão disponíveis por lá.`)}" target="_blank" rel="noopener noreferrer">ENVIAR CÓDIGO ↗</a><button class="admin-btn small" type="button" data-vip-edit="${c.id}">EDITAR</button><button class="admin-btn small ${c.ativo?'danger':''}" type="button" data-vip-toggle="${c.id}">${c.ativo?'SUSPENDER':'ATIVAR'}</button><button class="admin-btn small danger" type="button" data-vip-delete="${c.id}">EXCLUIR</button></div></td></tr>`;
+      }).join('')||'<tr><td colspan="9">Nenhum cliente VIP cadastrado.</td></tr>';
+      renderWhatsappClientOptions();
+      $$('[data-vip-edit]').forEach(btn=>btn.addEventListener('click',()=>{
+        const c=vipClients.find(x=>x.id===btn.dataset.vipEdit);if(!c)return;editingVipClientId=c.id;
+        $('#vipClientId').value=c.id;$('#vipClientName').value=c.nome;$('#vipClientPhone').value=c.whatsapp;$('#vipClientCode').value=c.codigo;
+        $('#vipClientLevel').value=c.nivel_vip||'Bronze';$('#vipClientBirthday').value=c.data_aniversario||'';
+        $('#vipDiscountType').value=c.desconto_tipo;$('#vipDiscountValue').value=Number(c.desconto_valor||0);$('#vipClientNotes').value=c.observacoes||'';$('#vipClientActive').checked=c.ativo;
+        $('#saveVipClient').textContent='SALVAR ALTERAÇÕES ↗';$('#cancelVipClientEdit').hidden=false;$('#vipClientForm').scrollIntoView({behavior:'smooth',block:'start'});message('vipClientMessage',`Editando cadastro de ${c.nome}.`);
+      }));
+      $$('[data-vip-toggle]').forEach(btn=>btn.addEventListener('click',async()=>{
+        const c=vipClients.find(x=>x.id===btn.dataset.vipToggle);if(!c)return;
+        const {error}=await sb.from('alcapone_clientes_vip').update({ativo:!c.ativo}).eq('id',c.id);
+        if(error){message('vipClientMessage',error.message,false);return;}message('vipClientMessage',`Acesso VIP ${c.ativo?'suspenso':'ativado'}.`);await loadVip();
+      }));
+      $$('[data-vip-delete]').forEach(btn=>btn.addEventListener('click',async()=>{
+        const c=vipClients.find(x=>x.id===btn.dataset.vipDelete);if(!c)return;
+        if(!await confirmDelete(`o cadastro VIP de ${c.nome}`,'Os pontos e resgates serão apagados. Reservas anteriores serão mantidas, mas os dados pessoais serão anonimizados.'))return;
+        try{await rpc('alcapone_excluir_cliente',{p_whatsapp:c.whatsapp});message('vipClientMessage',`Cadastro de ${c.nome} excluído e dados pessoais anonimizados.`);await loadVip();if(can('clientes'))await loadCustomers();}
+        catch(err){message('vipClientMessage',err.message,false);}
+      }));
+      const proMap=new Map(professionals.map(x=>[x.id,x.nome])),serviceMap=new Map(services.map(x=>[x.id,x.nome]));
+      $('#vipHoursList').innerHTML=vipHours.map(h=>`<div class="admin-list-item"><div><strong>${esc(proMap.get(h.profissional_id)||'Profissional')}</strong><br>${dateBR(h.data)} · ${String(h.hora_inicio).slice(0,5)}–${String(h.hora_fim).slice(0,5)}<br><small>${esc(h.descricao||'Horário exclusivo VIP')} · ${h.ativo?'ATIVO':'INATIVO'}</small></div><button type="button" class="admin-btn small danger" data-vip-hour-delete="${h.id}">REMOVER</button></div>`).join('')||'<p>Nenhum horário VIP cadastrado.</p>';
+      $$('[data-vip-hour-delete]').forEach(btn=>btn.addEventListener('click',async()=>{if(!await confirmDelete('este horário VIP'))return;const {error}=await sb.from('alcapone_vip_horarios').delete().eq('id',btn.dataset.vipHourDelete);if(error){message('vipHoursMessage',error.message,false);return;}message('vipHoursMessage','Horário removido.');await loadVip();}));
+      $('#vipOfferRows').innerHTML=vipOffers.map(o=>`<tr><td data-label="OFERTA"><strong>${esc(o.titulo)}</strong><small>${esc(o.descricao)}</small></td><td data-label="TIPO">${o.tipo==='combo'?'COMBO':'PROMOÇÃO'}</td><td data-label="SERVIÇO">${esc(o.servico_id?serviceMap.get(o.servico_id)||'Serviço':'Todos')}</td><td data-label="DESCONTO">${esc(vipDiscountLabel(o.desconto_tipo,o.desconto_valor))}</td><td data-label="PERÍODO">${dateBR(o.data_inicio)}<small>até ${dateBR(o.data_fim)}</small></td><td data-label="STATUS">${o.ativo?'ATIVA':'PAUSADA'}</td><td data-label="AÇÕES"><div class="admin-actions"><button type="button" class="admin-btn small ${o.ativo?'danger':''}" data-vip-offer-toggle="${o.id}">${o.ativo?'PAUSAR':'ATIVAR'}</button><button type="button" class="admin-btn small danger" data-vip-offer-delete="${o.id}">EXCLUIR</button></div></td></tr>`).join('')||'<tr><td colspan="7">Nenhuma oferta cadastrada.</td></tr>';
+      $$('[data-vip-offer-toggle]').forEach(btn=>btn.addEventListener('click',async()=>{const o=vipOffers.find(x=>x.id===btn.dataset.vipOfferToggle);if(!o)return;const {error}=await sb.from('alcapone_vip_ofertas').update({ativo:!o.ativo}).eq('id',o.id);if(error){message('vipOfferMessage',error.message,false);return;}await loadVip();}));
+      $$('[data-vip-offer-delete]').forEach(btn=>btn.addEventListener('click',async()=>{if(!await confirmDelete('esta oferta VIP'))return;const {error}=await sb.from('alcapone_vip_ofertas').delete().eq('id',btn.dataset.vipOfferDelete);if(error){message('vipOfferMessage',error.message,false);return;}await loadVip();}));
+      $('#vipRewardsList').innerHTML=vipRewards.map(r=>`<div class="admin-list-item"><div><strong>${esc(r.nome)}</strong><br><small>${Number(r.pontos_necessarios)} pontos · ${esc(r.descricao||'') } · ${r.ativo?'ATIVA':'PAUSADA'}</small></div><div class="admin-actions"><button type="button" class="admin-btn small ${r.ativo?'danger':''}" data-vip-reward-toggle="${r.id}">${r.ativo?'PAUSAR':'ATIVAR'}</button><button type="button" class="admin-btn small danger" data-vip-reward-delete="${r.id}">EXCLUIR</button></div></div>`).join('')||'<p>Nenhuma recompensa cadastrada.</p>';
+      $$('[data-vip-reward-toggle]').forEach(btn=>btn.addEventListener('click',async()=>{const r=vipRewards.find(x=>x.id===btn.dataset.vipRewardToggle);if(!r)return;const {error}=await sb.from('alcapone_vip_recompensas').update({ativo:!r.ativo}).eq('id',r.id);if(error){message('vipRewardMessage',error.message,false);return;}await loadVip();}));
+      $$('[data-vip-reward-delete]').forEach(btn=>btn.addEventListener('click',async()=>{const reward=vipRewards.find(x=>x.id===btn.dataset.vipRewardDelete);if(!reward||!await confirmDelete(`a recompensa ${reward.nome}`,'Recompensas com resgates vinculados não podem ser apagadas; pause-as para preservar o histórico.'))return;try{await rpc('alcapone_excluir_recompensa_vip',{p_id:reward.id});message('vipRewardMessage','Recompensa excluída.');await loadVip();}catch(err){message('vipRewardMessage',err.message,false);}}));
+      $('#vipRedemptionRows').innerHTML=vipRedemptions.map(r=>{
+        const client=vipClients.find(c=>c.id===r.cliente_vip_id),reward=vipRewards.find(x=>x.id===r.recompensa_id);
+        const actions=['solicitado','aprovado'].includes(r.status)?`<div class="admin-actions"><button class="admin-btn small primary" type="button" data-vip-redeem-done="${r.id}">MARCAR ENTREGUE</button><button class="admin-btn small danger" type="button" data-vip-redeem-cancel="${r.id}">CANCELAR</button></div>`:'—';
+        return `<tr><td data-label="CLIENTE"><strong>${esc(client?.nome||'Cliente')}</strong><small>${esc(client?.whatsapp||'')}</small></td><td data-label="RECOMPENSA">${esc(reward?.nome||'Recompensa')}</td><td data-label="PONTOS">${Number(r.pontos_necessarios)}</td><td data-label="SOLICITAÇÃO">${new Date(r.solicitado_em).toLocaleDateString('pt-BR')}</td><td data-label="STATUS"><span class="admin-chip">${r.status.toUpperCase()}</span></td><td data-label="AÇÕES">${actions}</td></tr>`;
+      }).join('')||'<tr><td colspan="6">Nenhuma solicitação de resgate.</td></tr>';
+      $$('[data-vip-redeem-done]').forEach(btn=>btn.addEventListener('click',async()=>{if(!confirm('Confirmar que a recompensa foi entregue? Os pontos serão debitados.'))return;const {error}=await sb.from('alcapone_vip_resgates').update({status:'entregue'}).eq('id',btn.dataset.vipRedeemDone);if(error){message('vipRedemptionMessage',error.message,false);return;}message('vipRedemptionMessage','Resgate concluído e pontos debitados.');await loadVip();}));
+      $$('[data-vip-redeem-cancel]').forEach(btn=>btn.addEventListener('click',async()=>{if(!confirm('Cancelar esta solicitação e liberar os pontos reservados?'))return;const {error}=await sb.from('alcapone_vip_resgates').update({status:'cancelado'}).eq('id',btn.dataset.vipRedeemCancel);if(error){message('vipRedemptionMessage',error.message,false);return;}message('vipRedemptionMessage','Solicitação cancelada; pontos liberados.');await loadVip();}));
+      if(configResult.data)$('#vipPointsPerReal').value=Number(configResult.data.pontos_por_real);
+    }
+    async function loadCustomers(){
+      customers=await rpc('alcapone_listar_clientes',{});
+      renderCustomers();
+    }
+    function renderCustomers(){
+      const query=$('#customerSearch').value.trim().toLowerCase();
+      const filtered=customers.filter(c=>`${c.nome||''} ${c.whatsapp||''}`.toLowerCase().includes(query));
+      $('#customerRows').innerHTML=filtered.map(c=>{
+        const last=c.ultima_visita?new Date(c.ultima_visita).toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'}):'—';
+        return `<tr><td data-label="CLIENTE"><strong>${esc(c.nome||'Cliente')}</strong></td><td data-label="WHATSAPP">${esc(c.whatsapp||'—')}</td><td data-label="RESERVAS">${Number(c.total_reservas||0)}</td><td data-label="ÚLTIMA VISITA">${last}</td><td data-label="VIP">${c.cliente_vip?`<span class="vip-level-chip">${esc(c.nivel_vip||'VIP')}</span>`:'—'}</td><td data-label="AÇÕES"><button type="button" class="admin-btn small danger" data-customer-delete="${esc(c.whatsapp)}">EXCLUIR CLIENTE</button></td></tr>`;
+      }).join('')||'<tr><td colspan="6">Nenhum cliente encontrado.</td></tr>';
+      $$('[data-customer-delete]').forEach(btn=>btn.addEventListener('click',async()=>{
+        const c=customers.find(x=>x.whatsapp===btn.dataset.customerDelete);if(!c)return;
+        if(!await confirmDelete(`o cliente ${c.nome}`,'O cadastro VIP, pontos e resgates serão removidos. As reservas antigas serão mantidas sem nome, telefone, e-mail ou observações.'))return;
+        try{const result=await rpc('alcapone_excluir_cliente',{p_whatsapp:c.whatsapp});message('customerMessage',`Cliente excluído. ${Number(result?.reservas_anonimizadas||0)} reserva(s) preservada(s) sem dados pessoais.`);await loadCustomers();if(can('vip'))await loadVip();}
+        catch(err){message('customerMessage',err.message,false);}
+      }));
+    }
+    $('#customerSearch').addEventListener('input',renderCustomers);
+    $('#reloadCustomers').addEventListener('click',async()=>{try{await loadCustomers();message('customerMessage','Lista de clientes atualizada.');}catch(err){message('customerMessage',err.message,false);}});
+
+    function selectedCollaboratorPermissions(){
+      return Object.fromEntries($$('#collaboratorPermissions [data-perm]').map(input=>[input.dataset.perm,input.checked]));
+    }
+    function setCollaboratorPermissions(perms={}){
+      $$('#collaboratorPermissions [data-perm]').forEach(input=>{input.checked=perms[input.dataset.perm]===true;});
+    }
+    function applyCollaboratorRolePreset(){
+      const role=$('#collaboratorRole').value;
+      if(role==='MASTER')setCollaboratorPermissions(rolePresets.MASTER);
+      else if(role!=='PERSONALIZADO'&&rolePresets[role])setCollaboratorPermissions(rolePresets[role]);
+      const master=role==='MASTER';
+      $$('#collaboratorPermissions [data-perm]').forEach(input=>input.disabled=master);
+      $('#collaboratorProfessionalWrap').hidden=role!=='PROFISSIONAL';
+    }
+    function resetCollaboratorForm(){
+      $('#collaboratorForm').reset();$('#collaboratorId').value='';$('#collaboratorRole').value='RECEPCAO';
+      $('#collaboratorPassword').required=true;$('#collaboratorPassword').placeholder='Mínimo de 8 caracteres';
+      $('#collaboratorEmail').readOnly=false;$('#saveCollaborator').textContent='CRIAR ACESSO ↗';$('#cancelCollaboratorEdit').hidden=true;
+      applyCollaboratorRolePreset();
+    }
+    async function loadCollaborators(){
+      if(!isMaster())return;
+      const {data,error}=await sb.from('administradores').select('usuario_id,nome,email,perfil,permissoes,ativo,profissional_id').order('nome');
+      if(error)throw error;collaboratorRows=data||[];
+      renderCollaborators();
+    }
+    function renderCollaborators(){
+      const proMap=new Map(professionals.map(p=>[p.id,p.nome]));
+      $('#collaboratorRows').innerHTML=collaboratorRows.map(u=>`<tr><td data-label="COLABORADOR"><strong>${esc(u.nome||'Colaborador')}</strong><small>${esc(u.email||'')}</small></td><td data-label="PERFIL">${esc(roleLabels[u.perfil]||u.perfil)}</td><td data-label="PROFISSIONAL">${esc(proMap.get(u.profissional_id)||'—')}</td><td data-label="STATUS"><span class="admin-user-state ${u.ativo?'':'off'}">${u.ativo?'ATIVO':'BLOQUEADO'}</span></td><td data-label="AÇÕES"><div class="admin-actions"><button type="button" class="admin-btn small" data-collab-edit="${u.usuario_id}">EDITAR</button><button type="button" class="admin-btn small ${u.ativo?'danger':''}" data-collab-toggle="${u.usuario_id}">${u.ativo?'BLOQUEAR':'REATIVAR'}</button><button type="button" class="admin-btn small danger" data-collab-delete="${u.usuario_id}">EXCLUIR</button></div></td></tr>`).join('')||'<tr><td colspan="5">Nenhum colaborador cadastrado.</td></tr>';
+      $$('[data-collab-edit]').forEach(btn=>btn.addEventListener('click',()=>{
+        const u=collaboratorRows.find(x=>x.usuario_id===btn.dataset.collabEdit);if(!u)return;
+        $('#collaboratorId').value=u.usuario_id;$('#collaboratorName').value=u.nome||'';$('#collaboratorEmail').value=u.email||'';
+        $('#collaboratorPassword').value='';$('#collaboratorPassword').required=false;$('#collaboratorPassword').placeholder='Deixe em branco para manter a senha atual';
+        $('#collaboratorRole').value=u.perfil||'PERSONALIZADO';$('#collaboratorProfessional').value=u.profissional_id||'';
+        applyCollaboratorRolePreset();
+        if(u.perfil==='MASTER')setCollaboratorPermissions(rolePresets.MASTER);else setCollaboratorPermissions(u.permissoes||{});
+        $('#saveCollaborator').textContent='SALVAR ALTERAÇÕES ↗';$('#cancelCollaboratorEdit').hidden=false;
+        $('#collaboratorForm').scrollIntoView({behavior:'smooth',block:'start'});message('collaboratorMessage',`Editando acesso de ${u.nome||u.email}.`);
+      }));
+      $$('[data-collab-toggle]').forEach(btn=>btn.addEventListener('click',async()=>{
+        const u=collaboratorRows.find(x=>x.usuario_id===btn.dataset.collabToggle);if(!u)return;
+        if(!confirm(`${u.ativo?'Bloquear':'Reativar'} o acesso de ${u.nome||u.email}?`))return;
+        try{await invokeCollaborator({action:'update',id:u.usuario_id,ativo:!u.ativo});message('collaboratorMessage',`Acesso ${u.ativo?'bloqueado':'reativado'}.`);await loadCollaborators();}
+        catch(err){message('collaboratorMessage',err.message,false);}
+      }));
+      $$('[data-collab-delete]').forEach(btn=>btn.addEventListener('click',async()=>{
+        const u=collaboratorRows.find(x=>x.usuario_id===btn.dataset.collabDelete);if(!u)return;
+        if(!await confirmDelete(`o acesso de ${u.nome||u.email}`,'O usuário será removido da equipe e sua conta de autenticação será excluída. Esta ação é definitiva.'))return;
+        try{await invokeCollaborator({action:'delete',id:u.usuario_id});message('collaboratorMessage',`Acesso de ${u.nome||u.email} excluído.`);await loadCollaborators();}
+        catch(err){message('collaboratorMessage',err.message,false);}
+      }));
+    }
+    async function invokeCollaborator(payload){
+      const {data:{session},error:sessionError}=await sb.auth.getSession();
+      if(sessionError)throw new Error(sessionError.message||'Não foi possível validar sua sessão.');
+      if(!session?.access_token)throw new Error('Sua sessão expirou. Entre novamente no painel.');
+      const {data,error}=await sb.functions.invoke('unhas-da-simone-usuarios',{
+        body:payload,
+        headers:{Authorization:`Bearer ${session.access_token}`}
+      });
+      if(error){
+        let detail=error.message||'Falha ao comunicar com a função segura de usuários.';
+        try{
+          const response=error.context;
+          if(response && typeof response.clone==='function'){
+            const raw=await response.clone().text();
+            if(raw){
+              try{const parsed=JSON.parse(raw);detail=parsed.error||parsed.message||raw;}
+              catch{detail=raw;}
+            }
+          }
+        }catch{}
+        throw new Error(detail);
+      }
+      if(data?.ok===false||data?.error)throw new Error(data.error||'A operação não foi concluída.');
+      return data;
+    }
+    $('#collaboratorRole').addEventListener('change',()=>{if($('#collaboratorRole').value==='PERSONALIZADO')setCollaboratorPermissions({});applyCollaboratorRolePreset();});
+    $('#cancelCollaboratorEdit').addEventListener('click',()=>{resetCollaboratorForm();message('collaboratorMessage','Edição cancelada.');});
+    $('#collaboratorForm').addEventListener('submit',async e=>{
+      e.preventDefault();
+      const id=$('#collaboratorId').value,role=$('#collaboratorRole').value,password=$('#collaboratorPassword').value;
+      const payload={action:id?'update':'create',id:id||undefined,nome:$('#collaboratorName').value.trim(),email:$('#collaboratorEmail').value.trim().toLowerCase(),perfil:role,permissoes:selectedCollaboratorPermissions(),profissional_id:role==='PROFISSIONAL'?($('#collaboratorProfessional').value||null):null};
+      if(!payload.nome||!payload.email){message('collaboratorMessage','Informe nome e e-mail.',false);return;}
+      if(!id){
+        if(password.length<8){message('collaboratorMessage','A senha inicial precisa ter pelo menos 8 caracteres.',false);return;}
+        payload.password=password;
+      }else if(password){
+        if(password.length<8){message('collaboratorMessage','A nova senha precisa ter pelo menos 8 caracteres.',false);return;}
+        payload.password=password;
+      }
+      if(role==='PROFISSIONAL'&&!payload.profissional_id){message('collaboratorMessage','Selecione o profissional vinculado ao acesso de profissional.',false);return;}
+      if(role==='MASTER')payload.permissoes=rolePresets.MASTER;
+      message('collaboratorMessage',id?'Atualizando colaborador...':'Criando acesso...');
+      try{await invokeCollaborator(payload);resetCollaboratorForm();message('collaboratorMessage',id?'Colaborador atualizado.':'Colaborador criado. O acesso já pode ser utilizado.');await loadCollaborators();}
+      catch(err){message('collaboratorMessage',err.message,false);}
+    });
+
+
+    // --------------------------------------------------------
+    // PACOTES DE SEIS ATENDIMENTOS
+    // --------------------------------------------------------
+    async function loadPackages(){
+      const [pkgResult,clientResult]=await Promise.all([
+        sb.from('vw_pacotes_saldo').select('*').order('comprado_em',{ascending:false}),
+        sb.from('clientes').select('id,nome,whatsapp,whatsapp_normalizado').eq('ativo',true).order('nome')
+      ]);
+      if(pkgResult.error)throw pkgResult.error;if(clientResult.error)throw clientResult.error;
+      packages=pkgResult.data||[];packageClients=clientResult.data||[];
+      fillSelect('packageClient',packageClients,'Selecione uma cliente');
+      fillSelect('recurrenceClient',packageClients,'Selecione uma cliente');
+      renderPackages();updateManualPackageOptions();
+      if($('#packagePurchase'))$('#packagePurchase').value=today();
+    }
+    function renderPackages(){
+      const rows=$('#packageRows');if(!rows)return;
+      const clients=new Map(packageClients.map(c=>[c.id,c]));
+      rows.innerHTML=packages.map(p=>{
+        const client=clients.get(p.cliente_id);
+        const expired=p.vence_em<today();
+        const status=expired?'VENCIDO':p.status.toUpperCase();
+        return `<tr><td data-label="CLIENTE"><strong>${esc(client?.nome||p.cliente_nome||'Cliente')}</strong><small>${esc(client?.whatsapp||'')}</small></td><td data-label="PACOTE">${esc(p.pacote_nome||'Pacote')}</td><td data-label="SALDO"><strong>${Number(p.creditos_disponiveis||0)} / ${Number(p.creditos_total||0)}</strong></td><td data-label="VALOR">${money(p.valor)}</td><td data-label="COMPRA">${dateBR(p.comprado_em)}</td><td data-label="VALIDADE">${dateBR(p.vence_em)}</td><td data-label="STATUS">${status}</td><td data-label="AÇÃO">${p.status==='ativo'&&!expired?`<button type="button" class="admin-btn small danger" data-package-toggle="${p.pacote_id}">PAUSAR</button>`:p.status==='pausado'?`<button type="button" class="admin-btn small" data-package-toggle="${p.pacote_id}">REATIVAR</button>`:'—'}</td></tr>`;
+      }).join('')||'<tr><td colspan="8">Nenhum pacote cadastrado.</td></tr>';
+      $$('[data-package-toggle]').forEach(btn=>btn.addEventListener('click',async()=>{
+        const pkg=packages.find(x=>x.pacote_id===btn.dataset.packageToggle);if(!pkg)return;
+        const status=pkg.status==='ativo'?'pausado':'ativo';
+        const {error}=await sb.from('pacotes_clientes').update({status}).eq('id',pkg.pacote_id);
+        if(error){message('packageMessage',error.message,false);return;}
+        message('packageMessage',`Pacote ${status==='ativo'?'reativado':'pausado'}.`);await loadPackages();
+      }));
+    }
+    function updateManualPackageOptions(){
+      const select=$('#manualPackage');if(!select)return;
+      const phone=normalizePhone($('#manualPhone')?.value||'');
+      const client=packageClients.find(c=>c.whatsapp_normalizado===phone);
+      const available=packages.filter(p=>client&&p.cliente_id===client.id&&p.status==='ativo'&&p.vence_em>=($('#manualDate')?.value||today())&&Number(p.creditos_disponiveis)>0);
+      const old=select.value;
+      select.innerHTML='<option value="">Sem pacote</option>'+available.map(p=>`<option value="${p.pacote_id}">${esc(p.pacote_nome)} · ${p.creditos_disponiveis} crédito(s) · vence ${dateBR(p.vence_em)}</option>`).join('');
+      if(available.some(p=>p.pacote_id===old))select.value=old;
+    }
+    $('#packageForm').addEventListener('submit',async e=>{
+      e.preventDefault();
+      const payload={
+        cliente_id:$('#packageClient').value,
+        nome:`Pacote de ${Number($('#packageCredits').value)} atendimentos`,
+        creditos_total:Number($('#packageCredits').value),
+        valor:Number($('#packageValue').value),
+        comprado_em:$('#packagePurchase').value,
+        validade_meses:Number($('#packageValidity').value),
+        observacoes:$('#packageNotes').value.trim()||null,
+        status:'ativo'
+      };
+      if(!payload.cliente_id||payload.creditos_total<1||payload.valor<0||payload.validade_meses<1){message('packageMessage','Confira os dados do pacote.',false);return;}
+      const {error}=await sb.from('pacotes_clientes').insert(payload);
+      if(error){message('packageMessage',error.message,false);return;}
+      e.target.reset();$('#packageCredits').value='6';$('#packageValue').value='140';$('#packageValidity').value='2';$('#packagePurchase').value=today();
+      message('packageMessage','Pacote registrado e créditos adicionados.');await loadPackages();
+    });
+
+    // --------------------------------------------------------
+    // RECORRÊNCIAS E ALTERAÇÃO EM MASSA
+    // --------------------------------------------------------
+    async function loadRecurrences(){
+      const [recResult,clientResult]=await Promise.all([
+        sb.from('recorrencias_agendamento').select('*').order('data_inicio',{ascending:false}),
+        sb.from('clientes').select('id,nome,whatsapp,whatsapp_normalizado').eq('ativo',true).order('nome')
+      ]);
+      if(recResult.error)throw recResult.error;if(clientResult.error)throw clientResult.error;
+      recurrences=recResult.data||[];packageClients=clientResult.data||packageClients;
+      fillSelect('recurrenceClient',packageClients,'Selecione uma cliente');
+      fillSelect('recurrencePro',professionals.filter(p=>p.ativo),'Selecione profissional');
+      fillSelect('recurrenceService',services.filter(s=>s.ativo),'Selecione serviço');
+      renderRecurrences();
+    }
+    function renderRecurrences(){
+      const clientMap=new Map(packageClients.map(c=>[c.id,c.nome]));
+      const proMap=new Map(professionals.map(p=>[p.id,p.nome]));
+      const serviceMap=new Map(services.map(s=>[s.id,s.nome]));
+      const dayNames=['DOMINGO','SEGUNDA','TERÇA','QUARTA','QUINTA','SEXTA','SÁBADO'];
+      $('#recurrenceRows').innerHTML=recurrences.map(r=>`<tr><td data-label="CLIENTE"><strong>${esc(clientMap.get(r.cliente_id)||'Cliente')}</strong></td><td data-label="SERVIÇO">${esc(serviceMap.get(r.servico_id)||'Serviço')}</td><td data-label="DIA / HORÁRIO">${dayNames[r.dia_semana]} · ${String(r.hora_inicio).slice(0,5)}<small>${esc(proMap.get(r.profissional_id)||'')}</small></td><td data-label="DURAÇÃO">${r.duracao_minutos} min</td><td data-label="PERÍODO">${dateBR(r.data_inicio)}<small>até ${r.data_fim?dateBR(r.data_fim):'sem data final'}</small></td><td data-label="STATUS">${r.ativo?'ATIVA':'PAUSADA'}</td><td data-label="AÇÕES"><div class="admin-actions"><button type="button" class="admin-btn small" data-recurrence-edit="${r.id}">ALTERAR FUTURAS</button><button type="button" class="admin-btn small ${r.ativo?'danger':''}" data-recurrence-toggle="${r.id}">${r.ativo?'PAUSAR':'ATIVAR'}</button></div></td></tr>`).join('')||'<tr><td colspan="7">Nenhuma recorrência cadastrada.</td></tr>';
+      $$('[data-recurrence-edit]').forEach(btn=>btn.addEventListener('click',()=>{
+        const r=recurrences.find(x=>x.id===btn.dataset.recurrenceEdit);if(!r)return;
+        $('#recurrenceEditId').value=r.id;$('#recurrenceEditFrom').value=today();
+        $('#recurrenceEditDay').value='';$('#recurrenceEditTime').value=String(r.hora_inicio).slice(0,5);
+        $('#recurrenceEditDuration').value=r.duracao_minutos;
+        $('#recurrenceEditForm').scrollIntoView({behavior:'smooth',block:'center'});
+        message('recurrenceEditMessage',`Série selecionada: ${clientMap.get(r.cliente_id)||'cliente'}. Ajuste os campos e salve.`);
+      }));
+      $$('[data-recurrence-toggle]').forEach(btn=>btn.addEventListener('click',async()=>{
+        const r=recurrences.find(x=>x.id===btn.dataset.recurrenceToggle);if(!r)return;
+        const {error}=await sb.from('recorrencias_agendamento').update({ativo:!r.ativo}).eq('id',r.id);
+        if(error){message('recurrenceMessage',error.message,false);return;}
+        message('recurrenceMessage',`Recorrência ${r.ativo?'pausada':'reativada'}.`);await loadRecurrences();
+      }));
+    }
+    $('#recurrenceForm').addEventListener('submit',async e=>{
+      e.preventDefault();
+      const service=services.find(s=>s.id===$('#recurrenceService').value);
+      const start=$('#recurrenceStart').value,end=$('#recurrenceEnd').value;
+      if(!service||!start||!end||end<start){message('recurrenceMessage','Confira cliente, serviço e período.',false);return;}
+      const payload={
+        cliente_id:$('#recurrenceClient').value,
+        profissional_id:$('#recurrencePro').value,
+        servico_id:service.id,
+        dia_semana:Number($('#recurrenceDay').value),
+        hora_inicio:$('#recurrenceTime').value,
+        duracao_minutos:Number($('#recurrenceDuration').value||60),
+        intervalo_semanas:Number($('#recurrenceInterval').value||1),
+        data_inicio:start,data_fim:end,
+        valor_bruto:Number(service.preco||0),
+        ativo:true
+      };
+      if(!payload.cliente_id||!payload.profissional_id||payload.duracao_minutos<5||payload.duracao_minutos>300){message('recurrenceMessage','Confira os dados da recorrência.',false);return;}
+      try{
+        const {data,error}=await sb.from('recorrencias_agendamento').insert(payload).select('id').single();
+        if(error)throw error;
+        const count=await rpc('simone_gerar_recorrencias',{p_recorrencia_id:data.id,p_ate:end});
+        message('recurrenceMessage',`${Number(count||0)} atendimento(s) recorrente(s) criado(s).`);
+        e.target.reset();$('#recurrenceStart').value=today();$('#recurrenceEnd').value=datePlusDays(today(),60);
+        await loadRecurrences();await loadBookings();
+      }catch(err){message('recurrenceMessage',err.message,false);}
+    });
+    $('#recurrenceEditForm').addEventListener('submit',async e=>{
+      e.preventDefault();
+      const id=$('#recurrenceEditId').value;
+      if(!id){message('recurrenceEditMessage','Selecione uma série na lista antes de alterar.',false);return;}
+      try{
+        const updated=await rpc('simone_alterar_recorrencia_futura',{
+          p_recorrencia_id:id,
+          p_data_inicio:$('#recurrenceEditFrom').value,
+          p_hora_inicio:$('#recurrenceEditTime').value||null,
+          p_duracao_minutos:$('#recurrenceEditDuration').value?Number($('#recurrenceEditDuration').value):null,
+          p_dia_semana:$('#recurrenceEditDay').value?Number($('#recurrenceEditDay').value):null
+        });
+        message('recurrenceEditMessage',`${Number(updated||0)} atendimento(s) futuro(s) atualizado(s).`);
+        $('#recurrenceEditId').value='';await loadRecurrences();await loadBookings();
+      }catch(err){message('recurrenceEditMessage',err.message,false);}
+    });
+    $('#cancelRecurrenceEdit').addEventListener('click',()=>{$('#recurrenceEditId').value='';$('#recurrenceEditForm').reset();message('recurrenceEditMessage','Seleção limpa.');});
+
+    // --------------------------------------------------------
+    // FERIADOS E DATAS ESPECIAIS
+    // --------------------------------------------------------
+    async function loadHolidays(){
+      const {data,error}=await sb.from('feriados').select('*').order('data');
+      if(error)throw error;holidays=data||[];renderHolidays();
+    }
+    function renderHolidays(){
+      $('#holidayRows').innerHTML=holidays.map(h=>`<div class="admin-list-item"><div><strong>${dateBR(h.data)} · ${esc(h.nome)}</strong><br><small>${esc(h.esfera.toUpperCase())}${h.municipio?' · '+esc(h.municipio):''}${h.uf?' / '+esc(h.uf):''} · ${h.bloqueia_agenda?'BLOQUEIA A AGENDA':'DIA LIBERADO'}</small></div><div class="admin-actions"><button type="button" class="admin-btn small" data-holiday-toggle="${h.id}">${h.bloqueia_agenda?'LIBERAR':'BLOQUEAR'}</button><button type="button" class="admin-btn small danger" data-holiday-delete="${h.id}">EXCLUIR</button></div></div>`).join('')||'<p>Nenhum feriado cadastrado.</p>';
+      $$('[data-holiday-toggle]').forEach(btn=>btn.addEventListener('click',async()=>{
+        const h=holidays.find(x=>x.id===btn.dataset.holidayToggle);if(!h)return;
+        const {error}=await sb.from('feriados').update({bloqueia_agenda:!h.bloqueia_agenda}).eq('id',h.id);
+        if(error){message('holidayMessage',error.message,false);return;}await loadHolidays();
+      }));
+      $$('[data-holiday-delete]').forEach(btn=>btn.addEventListener('click',async()=>{
+        const h=holidays.find(x=>x.id===btn.dataset.holidayDelete);if(!h||!await confirmDelete(`o feriado ${h.nome}`))return;
+        const {error}=await sb.from('feriados').delete().eq('id',h.id);
+        if(error){message('holidayMessage',error.message,false);return;}await loadHolidays();
+      }));
+    }
+    $('#holidayForm').addEventListener('submit',async e=>{
+      e.preventDefault();
+      const payload={data:$('#holidayDate').value,nome:$('#holidayName').value.trim(),esfera:$('#holidayScope').value,uf:$('#holidayUf').value.trim().toUpperCase()||null,municipio:$('#holidayCity').value.trim()||null,bloqueia_agenda:$('#holidayBlocks').checked};
+      const {error}=await sb.from('feriados').insert(payload);
+      if(error){message('holidayMessage',error.message,false);return;}
+      e.target.reset();$('#holidayUf').value='MG';$('#holidayBlocks').checked=true;
+      message('holidayMessage','Feriado cadastrado.');await loadHolidays();
+    });
+
+
+    // --------------------------------------------------------
+    // CONFIGURAÇÕES GERAIS E MODELO DE CONFIRMAÇÃO
+    // --------------------------------------------------------
+    let confirmationTemplate='Olá, {{nome}}! Seu horário no Unhas da Simone está confirmado para {{data}} às {{hora}}, para {{servico}}. Se precisar alterar ou cancelar, avise com antecedência por mensagem.';
+    let confirmationTemplateId=null;
+    async function loadSettings(){
+      const [settingsResult,templateResult]=await Promise.all([
+        sb.from('configuracoes_agenda').select('*').eq('id',true).maybeSingle(),
+        sb.from('mensagens_modelos').select('*').eq('tipo','confirmacao').eq('ativo',true).limit(1).maybeSingle()
+      ]);
+      if(settingsResult.error)throw settingsResult.error;
+      if(templateResult.error)throw templateResult.error;
+      const s=settingsResult.data;
+      if(s){
+        $('#settingBusinessName').value=s.nome_negocio||'Unhas da Simone';
+        $('#settingProfessionalName').value=s.nome_profissional||'Simone Jorge';
+        $('#settingLeadTime').value=Number(s.antecedencia_minutos||0);
+        $('#settingGap').value=Number(s.intervalo_entre_atendimentos_minutos||0);
+        $('#settingPackageCredits').value=Number(s.pacote_creditos_padrao||6);
+        $('#settingPackageValue').value=Number(s.pacote_valor_padrao||140);
+        $('#settingPackageMonths').value=Number(s.pacote_validade_meses||2);
+        if($('#packageCredits'))$('#packageCredits').value=Number(s.pacote_creditos_padrao||6);
+        if($('#packageValue'))$('#packageValue').value=Number(s.pacote_valor_padrao||140);
+        if($('#packageValidity'))$('#packageValidity').value=Number(s.pacote_validade_meses||2);
+      }
+      if(templateResult.data){
+        confirmationTemplateId=templateResult.data.id;
+        confirmationTemplate=templateResult.data.mensagem;
+      }
+      $('#confirmationTemplate').value=confirmationTemplate;
+    }
+    $('#settingsForm').addEventListener('submit',async e=>{
+      e.preventDefault();
+      const payload={
+        nome_negocio:$('#settingBusinessName').value.trim(),
+        nome_profissional:$('#settingProfessionalName').value.trim(),
+        antecedencia_minutos:Number($('#settingLeadTime').value||0),
+        intervalo_entre_atendimentos_minutos:Number($('#settingGap').value||0),
+        pacote_creditos_padrao:Number($('#settingPackageCredits').value||6),
+        pacote_valor_padrao:Number($('#settingPackageValue').value||140),
+        pacote_validade_meses:Number($('#settingPackageMonths').value||2)
+      };
+      const {error}=await sb.from('configuracoes_agenda').upsert({id:true,...payload});
+      if(error){message('settingsMessage',error.message,false);return;}
+      message('settingsMessage','Configurações salvas.');
+    });
+    $('#saveConfirmationTemplate').addEventListener('click',async()=>{
+      const mensagem=$('#confirmationTemplate').value.trim();
+      if(mensagem.length<10){message('messageTemplateStatus','Escreva uma mensagem antes de salvar.',false);return;}
+      let result;
+      if(confirmationTemplateId){
+        result=await sb.from('mensagens_modelos').update({mensagem,ativo:true}).eq('id',confirmationTemplateId);
+      }else{
+        result=await sb.from('mensagens_modelos').insert({tipo:'confirmacao',nome:'Confirmação de horário',mensagem,ativo:true}).select('id').single();
+        if(result.data)confirmationTemplateId=result.data.id;
+      }
+      if(result.error){message('messageTemplateStatus',result.error.message,false);return;}
+      confirmationTemplate=mensagem;message('messageTemplateStatus','Mensagem padrão salva.');
+    });
+    async function loadCalendarIntegration(){
+      const {data,error}=await sb.from('integracoes_google').select('*').eq('usuario_id',currentUser.id).maybeSingle();
+      if(error)throw error;
+      $('#googleCalendarStatus').textContent=data?.sincronizacao_ativa
+        ? `Conexão registrada. Última sincronização: ${data.ultima_sincronizacao?new Date(data.ultima_sincronizacao).toLocaleString('pt-BR'): 'ainda não realizada'}.`
+        : 'Google Agenda ainda não conectado. A sincronização automática será ativada após configurar as credenciais OAuth do Google.';
+    }
+
+    const whatsappTemplates={
+      promo:{detail:'OFERTA / DESCONTO',deadline:'VALIDADE DA PROMOÇÃO',detailPlaceholder:'Ex.: desconto na mão, no pé ou no pacote',deadlinePlaceholder:'Ex.: até sexta-feira, 27/11',text:'Oi, {nome}! 💅\n\nTem novidade boa na salinha: {detalhe}.{prazo}\n\nSe quiser aproveitar, me chama por aqui. Vou adorar te atender!\n\nSimone · Unhas da Simone'},
+      date:{detail:'DATA OU OCASIÃO',deadline:'CONDIÇÃO / VALIDADE',detailPlaceholder:'Ex.: Dia das Mães ou Dia do Cliente',deadlinePlaceholder:'Ex.: condição válida até 31/08',text:'Olá, {nome}! ✨\n\nPara celebrar {detalhe}, a Unhas da Simone preparou uma condição especial para você.{prazo}\n\nVai ser muito bom ter você por aqui!\n\nSimone · Unhas da Simone'},
+      birthday:{detail:'BENEFÍCIO DE ANIVERSÁRIO',deadline:'VALIDADE DO BENEFÍCIO',detailPlaceholder:'Ex.: 15% de desconto no mês do aniversário',deadlinePlaceholder:'Ex.: válido até 30/11',text:'Feliz aniversário, {nome}! 🎉\n\nQue seu novo ciclo venha cheio de coisas boas! Separei um carinho para comemorar com você: {detalhe}.{prazo}\n\nUm beijo, Simone 💕'},
+      reminder:{detail:'O QUE DEVE SER LEMBRADO',deadline:'DATA / HORÁRIO',detailPlaceholder:'Ex.: seu próximo horário para fazer as unhas',deadlinePlaceholder:'Ex.: amanhã, às 14h',text:'Oi, {nome}! Tudo bem? 😊\n\nPassando só para lembrar: {detalhe}.{prazo}\n\nSe precisar mudar alguma coisa, me avisa por aqui.\n\nSimone · Unhas da Simone'},
+      hours:{detail:'INFORMAÇÃO SOBRE O HORÁRIO',deadline:'DATA / HORÁRIO',detailPlaceholder:'Ex.: seu atendimento foi antecipado',deadlinePlaceholder:'Ex.: novo horário: 27/11 às 10h',text:'Oi, {nome}! Preciso te avisar uma coisinha sobre seu horário na salinha: {detalhe}.{prazo}\n\nMe confirma, por favor, se recebeu a mensagem.\n\nSimone · Unhas da Simone'}
+    };
+    function renderWhatsappClientOptions(){
+      const select=$('#waClientSelect');if(!select)return;const previous=select.value;
+      select.innerHTML='<option value="">Selecione um cliente</option>'+messageClients.map(c=>`<option value="${esc(c.id)}">${esc(c.nome)} · ${esc(c.whatsapp)}</option>`).join('');
+      if(messageClients.some(c=>c.id===previous))select.value=previous;
+      updateWhatsappPreview();
+    }
+    function selectedWhatsappClient(){return messageClients.find(c=>c.id===$('#waClientSelect')?.value)||null;}
+    function currentWhatsappText(){
+      const client=selectedWhatsappClient();if(!client)return '';
+      const detail=$('#waMessageDetail').value.trim(),deadline=$('#waMessageDeadline').value.trim();
+      return $('#waMessageTemplate').value.replaceAll('{nome}',client.nome).replaceAll('{detalhe}',detail).replaceAll('{prazo}',deadline?`\n\n${deadline}`:'').replace(/\{(?:nome|detalhe|prazo)\}/g,'').replace(/\n{3,}/g,'\n\n').trim();
+    }
+    function updateWhatsappPreview(){
+      const type=$('#waMessageType').value,config=whatsappTemplates[type];
+      $('#waDetailLabel').textContent=config.detail;$('#waDeadlineLabel').textContent=config.deadline;$('#waMessageDetail').placeholder=config.detailPlaceholder;$('#waMessageDeadline').placeholder=config.deadlinePlaceholder;
+      const text=currentWhatsappText();$('#waMessagePreview').textContent=text||'Selecione um cliente e preencha o dado principal para visualizar a mensagem.';
+    }
+    function loadWhatsappTemplate(){
+      const type=$('#waMessageType').value,config=whatsappTemplates[type];let saved='';
+      try{saved=localStorage.getItem(`simone_whatsapp_template_${type}`)||'';}catch{}
+      $('#waMessageTemplate').value=saved||config.text;$('#waMessageDetail').value='';$('#waMessageDeadline').value='';
+      $('#waMessageTemplate').dataset.type=type;updateWhatsappPreview();
+    }
+    $('#waMessageType').addEventListener('change',loadWhatsappTemplate);
+    ['waClientSelect','waMessageDetail','waMessageDeadline','waMessageTemplate'].forEach(id=>$('#'+id).addEventListener('input',updateWhatsappPreview));
+    $('#waClientSelect').addEventListener('change',updateWhatsappPreview);
+    $('#saveWaTemplate').addEventListener('click',()=>{
+      const type=$('#waMessageType').value,text=$('#waMessageTemplate').value.trim();if(!text){message('waMessageStatus','Digite um modelo antes de salvar.',false);return;}
+      try{localStorage.setItem(`simone_whatsapp_template_${type}`,text);message('waMessageStatus','Modelo salvo neste navegador.');}catch{message('waMessageStatus','Não foi possível salvar o modelo neste navegador.',false);}
+    });
+    $('#resetWaTemplate').addEventListener('click',()=>{
+      const type=$('#waMessageType').value;try{localStorage.removeItem(`simone_whatsapp_template_${type}`);}catch{}
+      $('#waMessageTemplate').value=whatsappTemplates[type].text;$('#waMessageDetail').value='';$('#waMessageDeadline').value='';updateWhatsappPreview();message('waMessageStatus','Modelo padrão restaurado.');
+    });
+    $('#openWaMessage').addEventListener('click',()=>{
+      const client=selectedWhatsappClient();if(!client){message('waMessageStatus','Selecione um cliente.',false);return;}
+      const detail=$('#waMessageDetail').value.trim();if(!detail){message('waMessageStatus','Preencha o dado principal da mensagem.',false);$('#waMessageDetail').focus();return;}
+      const text=currentWhatsappText(),digits=normalizePhone(client.whatsapp_normalizado||client.whatsapp);
+      if(digits.length<10||digits.length>11){message('waMessageStatus','O WhatsApp cadastrado deste cliente está inválido.',false);return;}
+      const url=`https://wa.me/55${digits}?text=${encodeURIComponent(text)}`;
+      window.open(url,'_blank','noopener,noreferrer');message('waMessageStatus',`Conversa de ${client.nome} aberta com a mensagem preenchida. Confira e toque em Enviar no WhatsApp.`);
+    });
+    loadWhatsappTemplate();
+    $('#generateVipCode').addEventListener('click',()=>$('#vipClientCode').value=vipCode());
+    $('#vipClientCode').addEventListener('input',()=>$('#vipClientCode').value=$('#vipClientCode').value.toUpperCase().replace(/[^A-Z0-9_-]/g,''));
+    $('#vipDiscountType').addEventListener('change',()=>{$('#vipDiscountValue').max=$('#vipDiscountType').value==='percentual'?'100':'';if($('#vipDiscountType').value==='nenhum')$('#vipDiscountValue').value='0';});
+    $('#cancelVipClientEdit').addEventListener('click',()=>{resetVipClientForm();message('vipClientMessage','Edição cancelada.');});
+    $('#vipClientForm').addEventListener('submit',async e=>{
+      e.preventDefault();message('vipClientMessage','Salvando cliente VIP...');
+      const phone=$('#vipClientPhone').value.trim(),digits=normalizePhone(phone),type=$('#vipDiscountType').value,value=Number($('#vipDiscountValue').value||0);
+      const payload={nome:$('#vipClientName').value.trim(),whatsapp:phone,whatsapp_normalizado:digits,codigo:$('#vipClientCode').value.trim().toUpperCase(),nivel_vip:$('#vipClientLevel').value,data_aniversario:$('#vipClientBirthday').value||null,desconto_tipo:type,desconto_valor:type==='nenhum'?0:value,ativo:$('#vipClientActive').checked,observacoes:$('#vipClientNotes').value.trim()||null};
+      if(digits.length<10||digits.length>11){message('vipClientMessage','Informe um WhatsApp com DDD válido.',false);return;}
+      if(!/^[A-Z0-9_-]{6,30}$/.test(payload.codigo)){message('vipClientMessage','O código deve ter de 6 a 30 caracteres (letras, números, hífen ou sublinhado).',false);return;}
+      if(type==='percentual'&&(value<=0||value>100)||type==='fixo'&&value<=0){message('vipClientMessage','Informe um desconto válido.',false);return;}
+      const wasEditing=Boolean(editingVipClientId);
+      const result=wasEditing?await sb.from('alcapone_clientes_vip').update(payload).eq('id',editingVipClientId):await sb.from('alcapone_clientes_vip').insert(payload);
+      if(result.error){message('vipClientMessage',result.error.message.includes('duplicate key')?'Este WhatsApp ou código já está cadastrado.':result.error.message,false);return;}
+      resetVipClientForm();message('vipClientMessage',wasEditing?'Cadastro atualizado.':'Cliente VIP cadastrado. Entregue o código e confirme o WhatsApp com o cliente.');await loadVip();
+    });
+    $('#vipHoursForm').addEventListener('submit',async e=>{
+      e.preventDefault();const start=$('#vipHourStart').value,end=$('#vipHourEnd').value;if(end<=start){message('vipHoursMessage','O horário final precisa ser posterior ao inicial.',false);return;}
+      const {error}=await sb.from('alcapone_vip_horarios').insert({profissional_id:$('#vipHourPro').value,data:$('#vipHourDate').value,hora_inicio:start,hora_fim:end,descricao:$('#vipHourDescription').value.trim()||'Horário VIP exclusivo',ativo:true});
+      if(error){message('vipHoursMessage',error.message,false);return;}message('vipHoursMessage','Horário exclusivo cadastrado.');e.target.reset();$('#vipHourDate').value=today();$('#vipHourStart').value='08:00';$('#vipHourEnd').value='09:00';await loadVip();
+    });
+    $('#vipPointsForm').addEventListener('submit',async e=>{e.preventDefault();const value=Number($('#vipPointsPerReal').value);if(!Number.isFinite(value)||value<=0||value>1000){message('vipPointsMessage','Informe uma taxa entre 0,01 e 1.000 pontos por real.',false);return;}const {error}=await sb.from('alcapone_vip_pontos_config').upsert({id:true,pontos_por_real:value,atualizado_em:new Date().toISOString()},{onConflict:'id'});if(error){message('vipPointsMessage',error.message,false);return;}message('vipPointsMessage','Regra de pontuação atualizada.');});
+    $('#vipRewardForm').addEventListener('submit',async e=>{e.preventDefault();const points=Number($('#vipRewardPoints').value);if(!Number.isInteger(points)||points<1){message('vipRewardMessage','Informe uma pontuação inteira maior que zero.',false);return;}const {error}=await sb.from('alcapone_vip_recompensas').insert({nome:$('#vipRewardName').value.trim(),descricao:$('#vipRewardDescription').value.trim()||null,pontos_necessarios:points,ativo:$('#vipRewardActive').checked});if(error){message('vipRewardMessage',error.message,false);return;}e.target.reset();$('#vipRewardActive').checked=true;message('vipRewardMessage','Recompensa cadastrada.');await loadVip();});
+    $('#vipOfferDiscountType').addEventListener('change',()=>{if($('#vipOfferDiscountType').value==='nenhum')$('#vipOfferDiscountValue').value='0';$('#vipOfferDiscountValue').max=$('#vipOfferDiscountType').value==='percentual'?'100':'';});
+    $('#vipOfferType').addEventListener('change',()=>{if($('#vipOfferType').value==='combo'){$('#vipOfferDiscountType').value='nenhum';$('#vipOfferDiscountValue').value='0';$('#vipOfferDiscountType').disabled=true;$('#vipOfferDiscountValue').disabled=true;}else{$('#vipOfferDiscountType').disabled=false;$('#vipOfferDiscountValue').disabled=false;}});
+    $('#vipOfferForm').addEventListener('submit',async e=>{e.preventDefault();const type=$('#vipOfferDiscountType').value,value=Number($('#vipOfferDiscountValue').value||0);if($('#vipOfferEnd').value<$('#vipOfferStart').value){message('vipOfferMessage','Confira o período da oferta.',false);return;}if(type==='percentual'&&(value<=0||value>100)||type==='fixo'&&value<=0){message('vipOfferMessage','Informe um desconto válido.',false);return;}const {error}=await sb.from('alcapone_vip_ofertas').insert({titulo:$('#vipOfferTitle').value.trim(),descricao:$('#vipOfferDescription').value.trim(),tipo:$('#vipOfferType').value,servico_id:$('#vipOfferService').value||null,desconto_tipo:type,desconto_valor:type==='nenhum'?0:value,data_inicio:$('#vipOfferStart').value,data_fim:$('#vipOfferEnd').value,ativo:$('#vipOfferActive').checked});if(error){message('vipOfferMessage',error.message,false);return;}e.target.reset();$('#vipOfferActive').checked=true;$('#vipOfferType').value='promocao';$('#vipOfferDiscountType').disabled=false;$('#vipOfferDiscountValue').disabled=false;$('#vipOfferDiscountType').value='nenhum';$('#vipOfferDiscountValue').value='0';$('#vipOfferStart').value=today();$('#vipOfferEnd').value=today();message('vipOfferMessage','Oferta VIP cadastrada.');await loadVip();});
+
+    async function openReschedule(b){
+      rescheduleBooking=b;
+      $('#rescheduleId').value=b.id;$('#rescheduleClient').textContent=`${b.cliente_nome} · ${timeBR(b.inicio)} · ${b.id.slice(0,8).toUpperCase()}`;
+      $('#reschedulePro').value=b.profissional_id;
+      $('#rescheduleDate').value=b.inicio.slice(0,10);$('#rescheduleDuration').value=b.duracao_minutos||60;
+      $('#rescheduleTime').innerHTML='<option value="">Consultando horários...</option>';
+      $('#rescheduleDialog').showModal();
+      await loadRescheduleSlots();
+    }
+    async function loadRescheduleSlots(){
+      if(!rescheduleBooking)return;
+      const pro=$('#reschedulePro').value,date=$('#rescheduleDate').value,el=$('#rescheduleTime');
+      el.innerHTML='<option value="">CONSULTANDO...</option>';
+      try{
+        const slots=await rpc('alcapone_disponibilidade',{p_profissional_id:pro,p_servico_id:rescheduleBooking.servico_id,p_data:date,p_duracao_minutos:Number($('#rescheduleDuration').value||rescheduleBooking.duracao_minutos||60),p_codigo_vip:rescheduleBooking.vip_codigo||null,p_whatsapp:rescheduleBooking.cliente_whatsapp||null});
+        el.innerHTML=(slots||[]).map(x=>`<option value="${esc(x.hora)}">${esc(x.hora)}${x.vip_exclusivo?' · VIP':''}</option>`).join('')||'<option value="">SEM HORÁRIOS</option>';
+      }catch(e){el.innerHTML='<option value="">ERRO AO CONSULTAR</option>';message('globalMessage',e.message,false);}
+    }
+    ['reschedulePro','rescheduleDate','rescheduleDuration'].forEach(id=>$('#'+id).addEventListener('change',loadRescheduleSlots));
+    $('#closeReschedule').addEventListener('click',()=>$('#rescheduleDialog').close());
+    $('#rescheduleForm').addEventListener('submit',async e=>{
+      e.preventDefault();if(!rescheduleBooking)return;
+      const pro=$('#reschedulePro').value,date=$('#rescheduleDate').value,time=$('#rescheduleTime').value;
+      const service=services.find(x=>x.id===rescheduleBooking.servico_id);
+      const duration=Number($('#rescheduleDuration').value||rescheduleBooking.duracao_minutos||service?.duracao_minutos||60);const inicio=isoLocal(date,time),fim=plusMinutes(inicio,duration);
+      const {error}=await sb.from('reservas').update({profissional_id:pro,inicio,fim,duracao_minutos:duration}).eq('id',rescheduleBooking.id).in('status',['agendado','confirmado']);
+      if(error){message('globalMessage',error.message.includes('alcapone_reservas_sem_sobreposicao')?'Este horário acabou de ser ocupado. Escolha outro.':error.message,false);return;}
+      $('#rescheduleDialog').close();message('globalMessage','Reserva remarcada. Avise o cliente pelo WhatsApp.');await loadBookings();
+    });
+
+    $('#blockDate').min=today();$('#manualDate').min=today();
+    resetCouponForm();
+    resetVipClientForm();
+    resetServiceForm();
+    resetProfessionalForm();
+    resetCollaboratorForm();
+    $('#vipClientLevel').value='Bronze';
+    $('#vipHourDate').min=today();$('#vipHourDate').max=datePlusDays(today(),60);$('#vipHourDate').value=today();
+    $('#vipOfferStart').value=today();$('#vipOfferEnd').value=today();
+    if($('#packagePurchase'))$('#packagePurchase').value=today();
+    if($('#recurrenceStart'))$('#recurrenceStart').value=today();
+    if($('#recurrenceEnd'))$('#recurrenceEnd').value=datePlusDays(today(),60);
+    if($('#recurrenceEditFrom'))$('#recurrenceEditFrom').value=today();
+    if($('#holidayDate'))$('#holidayDate').value=today();
+    const {data:{session}}=await sb.auth.getSession();
+    if(session){try{await showPanel();}catch(e){message('loginMessage',e.message,false);}}
+  })();
+  </script>
+</body>
+</html>
