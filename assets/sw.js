@@ -1,4 +1,4 @@
-const CACHE_NAME = 'unhas-da-simone-v1';
+const CACHE_NAME = 'unhas-da-simone-v2';
 const CORE = [
   './',
   './index.html',
@@ -9,6 +9,7 @@ const CORE = [
   './app.js',
   './minha.js',
   './assets/logo.png',
+  './assets/logo-horizontal.png',
   './assets/avatar-simone.webp',
   './assets/esmaltes.webp',
   './assets/app-icon-192.png',

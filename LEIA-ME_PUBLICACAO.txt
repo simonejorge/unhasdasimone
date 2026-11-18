@@ -1,17 +1,9 @@
-UNHAS DA SIMONE — PUBLICAÇÃO DO SITE
+UNHAS DA SIMONE — ATUALIZAÇÃO VISUAL E FAQ
 
-1. Crie um repositório GitHub separado do Al Capone, por exemplo: unhas-da-simone.
-2. Extraia este ZIP no computador.
-3. Envie TODO o CONTEÚDO desta pasta para a RAIZ do repositório.
-   IMPORTANTE: index.html precisa ficar diretamente na raiz, não dentro de outra pasta.
-4. No GitHub, abra Settings > Pages.
-5. Em Build and deployment, escolha Deploy from a branch.
-6. Branch: main. Folder: / (root). Salve.
-7. Aguarde a publicação e copie a URL do GitHub Pages.
-8. No Supabase, abra Authentication > URL Configuration.
-9. Configure Site URL com a URL principal do GitHub Pages.
-10. Em Redirect URLs, adicione também a URL completa de recuperar-senha.html.
+Substitua os arquivos do repositório GitHub Pages pelos arquivos desta pasta, preservando a estrutura e a pasta assets. Faça commit e aguarde a publicação.
 
-O aplicativo usa a URL e a chave pública do projeto Supabase Unhas da Simone.
-Não adicione service_role ou secret keys ao repositório.
-A Edge Function unhas-da-simone-usuarios já foi implantada separadamente no Supabase.
+Esta atualização mantém o agendamento e o painel já publicados. Não requer SQL nem nova implantação da Edge Function.
+
+Inclui: Merriweather nos títulos, Lato nos textos, contraste melhorado no destaque, logotipo completo maior, retrato da Simone com respiro, textos em caixa de frase, textos auxiliares ampliados, transições suaves, FAQ com 14 perguntas e dados estruturados FAQPage. As novas regras visuais da página pública ficam isoladas para não alterar o painel administrativo.
+
+Após publicar, atualize com Ctrl+F5. Se estiver instalada como PWA, feche e abra novamente.
