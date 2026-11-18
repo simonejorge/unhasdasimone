@@ -1,4 +1,4 @@
-const CACHE_NAME = 'unhas-da-simone-v5-faq-seo';
+const CACHE_NAME = 'unhas-da-simone-v6-google-live-freebusy';
 const CORE = [
   './',
   './index.html',

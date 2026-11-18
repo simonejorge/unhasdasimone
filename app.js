@@ -22,6 +22,33 @@
     if(!response.ok)throw Error(payload?.message || payload?.hint || `Erro de conexão (${response.status}).`);
     return payload;
   }
+  async function googleBusyForDate(date){
+    const timeMin=new Date(`${date}T00:00:00-03:00`).toISOString();
+    const timeMax=new Date(`${addDays(date,1)}T00:00:00-03:00`).toISOString();
+    const response=await fetch(`${URL_BASE}/functions/v1/unhas-da-simone-google-calendar`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','apikey':PUBLIC_KEY},
+      body:JSON.stringify({action:'public_freebusy',timeMin,timeMax}),
+      cache:'no-store'
+    });
+    const raw=await response.text();
+    let payload={};
+    if(raw){
+      try{payload=JSON.parse(raw);}
+      catch{throw new Error(`Não foi possível consultar a agenda Google (HTTP ${response.status}).`);}
+    }
+    if(!response.ok)throw new Error(payload?.error||`Não foi possível consultar a agenda Google (HTTP ${response.status}).`);
+    if(!Array.isArray(payload.busy))throw new Error('A agenda Google não retornou os horários ocupados.');
+    return payload.busy;
+  }
+  function overlapsGoogleBusy(date,time,duration,busy){
+    const start=new Date(`${date}T${time}:00-03:00`).getTime();
+    const end=start+Number(duration||30)*60000;
+    return (busy||[]).some(period=>{
+      const busyStart=Date.parse(period.start),busyEnd=Date.parse(period.end);
+      return Number.isFinite(busyStart)&&Number.isFinite(busyEnd)&&start<busyEnd&&end>busyStart;
+    });
+  }
   let data=null,step=1,dateOffset=0,fetching=0;
   const booking={service_id:null, professional_id:null, date:null, time:null, coupon:null, vip:null};
   const state=()=>({service:data.services.find(x=>x.id===booking.service_id),pro:data.professionals.find(x=>x.id===booking.professional_id)});
@@ -101,9 +128,15 @@
     $('#slotArea').innerHTML='<p class="empty-note">Consultando horários...</p>';
     $('#availabilityMeta').textContent=formattedDate(booking.date);
     try{
-      const result=await rpc('alcapone_disponibilidade',{p_profissional_id:booking.professional_id,p_servico_id:booking.service_id,p_data:booking.date,p_codigo_vip:booking.vip?.code||null,p_whatsapp:booking.vip?.phone||null});
-      const slots=(result||[]).map(item=>({time:item.hora,vipOnly:Boolean(item.vip_exclusivo)}));
+      const [result,googleBusy]=await Promise.all([
+        rpc('alcapone_disponibilidade',{p_profissional_id:booking.professional_id,p_servico_id:booking.service_id,p_data:booking.date,p_codigo_vip:booking.vip?.code||null,p_whatsapp:booking.vip?.phone||null}),
+        googleBusyForDate(booking.date)
+      ]);
       if(seq!==fetching)return;
+      const duration=Number(state().service?.duration||30);
+      const slots=(result||[])
+        .filter(item=>!overlapsGoogleBusy(booking.date,item.hora,duration,googleBusy))
+        .map(item=>({time:item.hora,vipOnly:Boolean(item.vip_exclusivo)}));
       if(!slots.length){$('#slotArea').innerHTML='<p class="empty-note">Sem horários disponíveis. Experimente outra data.</p>';booking.time=null;updateNext();return;}
       let html='';
       for(const [title,items] of [['MANHÃ',slots.filter(s=>s.time<'12:00')],['TARDE',slots.filter(s=>s.time>='12:00')]]){
@@ -301,6 +334,16 @@
     }
     const next=$('#nextBtn');next.disabled=true;next.textContent='CONFIRMANDO...';err.hidden=true;
     try{
+      // Revalida no último instante: o compromisso pode ter sido criado no Google
+      // depois que a pessoa abriu a lista de horários.
+      const googleBusy=await googleBusyForDate(booking.date);
+      const service=state().service;
+      if(overlapsGoogleBusy(booking.date,booking.time,service.duration,googleBusy)){
+        booking.time=null;
+        go(3);
+        $('#slotArea').innerHTML='<p class="empty-note">Esse horário acabou de ficar indisponível na agenda da Simone. Escolha outro horário.</p>';
+        return;
+      }
       const payload=await rpc('alcapone_agendar',{
         p_profissional_id:booking.professional_id,p_servico_id:booking.service_id,
         p_data:booking.date,p_hora:booking.time,p_nome:fullName,p_whatsapp:phone,
