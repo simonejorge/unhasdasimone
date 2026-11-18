@@ -1,4 +1,4 @@
-const CACHE_NAME = 'unhas-da-simone-v3-logo-oficial';
+const CACHE_NAME = 'unhas-da-simone-v4-google-calendar';
 const CORE = [
   './',
   './index.html',
