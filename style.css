@@ -274,11 +274,14 @@ body.public-site .footer-main p{font-size:14px;line-height:1.8;color:#65463c}
 body.public-site .footer-main>span{font-size:13px;line-height:1.7;color:#65463c}
 body.public-site .footer-small{border-color:#d8b4a5;color:#785b51;font-size:12px}
 body.public-site .footer-small a{color:#8c482f}
+body.public-site .footer-small .footer-faq-link{font-size:10px;font-weight:600;letter-spacing:.15px;opacity:.82}
 body.public-site .faq-section{padding:76px 0 82px;background:#f7e8e1;color:#4b2a24;border-top:1px solid #e7cfc4}
 body.public-site .faq-wrap{max-width:1040px}
 body.public-site .faq-intro{max-width:720px;margin:0 auto 30px;text-align:center}
 body.public-site .faq-intro h2{font:400 clamp(32px,4vw,47px)/1.25 var(--display);color:#4b251e;margin:12px 0}
+body.public-site .faq-intro h1{font:400 clamp(32px,4vw,47px)/1.25 var(--display);color:#4b251e;margin:12px 0}
 body.public-site .faq-intro h2 em{color:#a85d3e}
+body.public-site .faq-intro h1 em{color:#a85d3e}
 body.public-site .faq-intro>p:last-child{font-size:16px;line-height:1.8;color:#80635b}
 body.public-site .faq-list{display:grid;gap:10px}
 body.public-site .faq-item{background:#fffaf7;border:1px solid #e2c5b8;border-radius:12px;overflow:hidden;box-shadow:0 5px 18px #633b3108;transition:border-color .25s ease,box-shadow .25s ease,transform .25s ease}
@@ -346,7 +349,7 @@ body.public-site .faq-item{scroll-margin-top:120px}
   body.public-site .footer-main p,
 body.public-site .footer-main>span{font-size:13px}
   body.public-site .faq-section{padding:50px 0 56px}
-  body.public-site .faq-intro h2{font-size:31px}
+  body.public-site .faq-intro h2,body.public-site .faq-intro h1{font-size:31px}
   body.public-site .faq-intro>p:last-child{font-size:14px}
   body.public-site .faq-item summary{font-size:14px;padding:15px 15px;gap:10px}
   body.public-site .faq-answer{padding:0 15px 15px}

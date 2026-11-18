@@ -1,7 +1,8 @@
-const CACHE_NAME = 'unhas-da-simone-v4-google-calendar';
+const CACHE_NAME = 'unhas-da-simone-v5-faq-seo';
 const CORE = [
   './',
   './index.html',
+  './faq/',
   './admin.html',
   './minha.html',
   './recuperar-senha.html',

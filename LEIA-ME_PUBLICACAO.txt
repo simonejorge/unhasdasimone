@@ -1,9 +1,18 @@
-UNHAS DA SIMONE — ATUALIZAÇÃO VISUAL E FAQ
+UNHAS DA SIMONE — FAQ EM PÁGINA PRÓPRIA E SEO TÉCNICO
 
 Substitua os arquivos do repositório GitHub Pages pelos arquivos desta pasta, preservando a estrutura e a pasta assets. Faça commit e aguarde a publicação.
 
-Esta atualização mantém o agendamento e o painel já publicados. Não requer SQL nem nova implantação da Edge Function.
+A página inicial mantém o agendamento e os recursos existentes. As 14 perguntas frequentes foram movidas para /faq/ e o rodapé da página inicial recebeu um link discreto “Perguntas frequentes”.
 
-Inclui: Merriweather nos títulos, Lato nos textos, contraste melhorado no destaque, logotipo completo maior, retrato da Simone com respiro, textos em caixa de frase, textos auxiliares ampliados, transições suaves, FAQ com 14 perguntas e dados estruturados FAQPage. As novas regras visuais da página pública ficam isoladas para não alterar o painel administrativo.
+SEO incluído:
+- robots.txt na raiz;
+- sitemap.xml com as páginas públicas canônicas;
+- canonical, Open Graph e Twitter Cards na página inicial e em /faq/;
+- dados estruturados NailSalon na página inicial;
+- dados estruturados FAQPage somente em /faq/;
+- páginas administrativas, de reserva e recuperação de senha marcadas como noindex;
+- FAQ incluído no cache do service worker.
+
+Não requer SQL nem nova implantação da Edge Function.
 
 Após publicar, atualize com Ctrl+F5. Se estiver instalada como PWA, feche e abra novamente.

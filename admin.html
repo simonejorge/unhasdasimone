@@ -920,7 +920,7 @@
       if(can('recorrencias'))tasks.push(loadRecurrences());
       if(can('feriados'))tasks.push(loadHolidays());
       if(can('configuracoes'))tasks.push(loadSettings());
-      if(can('integracoes'))tasks.push(loadCalendarIntegration());
+      if(can('integracoes'))tasks.push(loadCalendarIntegration().catch(error=>{message('googleCalendarMessage',`Não foi possível consultar o status da Google Agenda: ${error.message}`,false);}));
       if(isMaster())tasks.push(loadCollaborators());
       await Promise.all(tasks);
     }
@@ -1662,21 +1662,22 @@ Seus benefícios e pontos estarão disponíveis por lá.`)}" target="_blank" rel
       const {data:{session},error:sessionError}=await sb.auth.getSession();
       if(sessionError)throw new Error(sessionError.message||'Não foi possível validar sua sessão.');
       if(!session?.access_token)throw new Error('Sua sessão expirou. Entre novamente no painel.');
-      const {data,error}=await sb.functions.invoke('unhas-da-simone-google-calendar',{
-        body:payload,
-        headers:{Authorization:`Bearer ${session.access_token}`}
+      const response=await fetch(`${SUPABASE_URL}/functions/v1/unhas-da-simone-google-calendar`,{
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json',
+          'apikey':SUPABASE_KEY,
+          'Authorization':`Bearer ${session.access_token}`
+        },
+        body:JSON.stringify(payload)
       });
-      if(error){
-        let detail=error.message||'Falha ao comunicar com a integração Google Agenda.';
-        try{
-          const response=error.context;
-          if(response&&typeof response.clone==='function'){
-            const raw=await response.clone().text();
-            if(raw){try{const parsed=JSON.parse(raw);detail=parsed.error||parsed.message||raw;}catch{detail=raw;}}
-          }
-        }catch{}
-        throw new Error(detail);
+      const raw=await response.text();
+      let data={};
+      if(raw){
+        try{data=JSON.parse(raw);}
+        catch{throw new Error(`A integração Google retornou uma resposta inválida (HTTP ${response.status}): ${raw.slice(0,240)}`);}
       }
+      if(!response.ok)throw new Error(data?.error||data?.message||`Falha na integração Google (HTTP ${response.status}).`);
       if(data?.error)throw new Error(data.error);
       return data;
     }
@@ -1684,11 +1685,16 @@ Seus benefícios e pontos estarão disponíveis por lá.`)}" target="_blank" rel
     async function loadCalendarIntegration(){
       const status=await invokeGoogleCalendar({action:'status'});
       const connected=Boolean(status?.connected);
+      const lastSync=status?.last_sync
+        ? new Date(status.last_sync).toLocaleString('pt-BR')
+        : 'ainda não realizada';
+      const warning=status?.status_warning||status?.last_error||'';
       $('#googleCalendarStatus').textContent=connected
-        ? `Conectada à agenda Google da Simone. Última sincronização: ${status.last_sync?new Date(status.last_sync).toLocaleString('pt-BR'):'ainda não realizada'}.`
+        ? `Conectada à agenda Google da Simone. Última sincronização: ${lastSync}.${warning?` Aviso: ${warning}`:''}`
         : 'Google Agenda ainda não conectada.';
       $('#connectGoogleCalendar').textContent=connected?'RECONCILIAR CONTA GOOGLE ↗':'CONECTAR GOOGLE AGENDA ↗';
       $('#syncGoogleCalendar').disabled=!connected;
+      return status;
     }
 
     $('#connectGoogleCalendar').addEventListener('click',async()=>{
@@ -1718,16 +1724,34 @@ Seus benefícios e pontos estarão disponíveis por lá.`)}" target="_blank" rel
         const removed=Number(result.appointments_removed||0);
         const blocks=Number(result.personal_blocks_synced||0);
         const conflicts=Number(result.block_conflicts||0);
+        const appointmentErrors=Number(result.appointment_errors||0);
         const summary=`Concluído: ${appointments} atendimento(s) sincronizado(s), ${removed} evento(s) removido(s) e ${blocks} compromisso(s) pessoal(is) importado(s).`;
-        message('googleCalendarMessage',conflicts?`${summary} ${conflicts} conflito(s) com reservas existentes precisam de conferência.`:summary,!conflicts);
-        await loadCalendarIntegration();
+        const details=[];
+        if(appointmentErrors)details.push(`${appointmentErrors} erro(s) em atendimentos${Array.isArray(result.appointment_messages)&&result.appointment_messages.length?`: ${result.appointment_messages.join(' | ')}`:''}`);
+        if(conflicts)details.push(`${conflicts} conflito(s) com reservas existentes`);
+        let finalMessage=details.length?`${summary} Atenção: ${details.join('; ')}.`:summary;
+        let ok=details.length===0;
+        try{
+          const status=await loadCalendarIntegration();
+          if(status?.status_warning){finalMessage+=` Não foi possível atualizar o histórico: ${status.status_warning}`;ok=false;}
+        }catch(statusError){
+          finalMessage+=` A sincronização foi concluída, mas a leitura do status falhou: ${statusError.message}`;
+          ok=false;
+        }
+        message('googleCalendarMessage',finalMessage,ok);
       }catch(error){message('googleCalendarMessage',error.message,false);}
       finally{button.disabled=false;button.textContent='SINCRONIZAR AGORA ↻';}
     });
 
     $('#refreshGoogleCalendar').addEventListener('click',async()=>{
-      try{await loadCalendarIntegration();message('googleCalendarMessage','Status atualizado.');}
-      catch(error){message('googleCalendarMessage',error.message,false);}
+      const button=$('#refreshGoogleCalendar');
+      button.disabled=true;button.textContent='CONSULTANDO...';
+      try{
+        const status=await loadCalendarIntegration();
+        if(status?.status_warning)message('googleCalendarMessage',`Status consultado. ${status.status_warning}`,false);
+        else message('googleCalendarMessage','Status atualizado.');
+      }catch(error){message('googleCalendarMessage',error.message,false);}
+      finally{button.disabled=false;button.textContent='ATUALIZAR STATUS';}
     });
 
     const whatsappTemplates={
