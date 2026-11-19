@@ -280,6 +280,7 @@
 
         <nav class="admin-tabs" aria-label="Seções do painel">
           <button type="button" class="active" data-tab="agenda" data-permission="agenda">AGENDA</button>
+          <button type="button" data-tab="notificacoes" data-permission="agenda">NOTIFICAÇÕES</button>
           <button type="button" data-tab="manual" data-permission="agendamento_manual">NOVO AGENDAMENTO</button>
           <button type="button" data-tab="pacotes" data-permission="pacotes">PACOTES</button>
           <button type="button" data-tab="recorrencias" data-permission="recorrencias">RECORRÊNCIAS</button>
@@ -315,6 +316,20 @@
               <div class="admin-stat"><strong id="dayRevenue">—</strong><span>VALOR PREVISTO (CONFIRMADOS)</span></div>
             </div>
             <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>HORÁRIO</th><th>CLIENTE</th><th>PROFISSIONAL</th><th>SERVIÇO</th><th>STATUS</th><th>AÇÕES</th></tr></thead><tbody id="bookRows"><tr><td colspan="6">Carregando agenda...</td></tr></tbody></table></div>
+          </div>
+        </section>
+
+        <section class="admin-section" data-section="notificacoes">
+          <div class="admin-card">
+            <h2>NOTIFICAÇÕES PUSH</h2>
+            <p>Receba avisos de novos agendamentos, cancelamentos e alterações de horário neste dispositivo, mesmo quando o painel estiver fechado.</p>
+            <p id="pushStatus" class="admin-note" role="status" aria-live="polite">Verificando suporte do dispositivo...</p>
+            <div class="admin-actions" style="margin-top:14px;flex-wrap:wrap">
+              <button id="enablePush" class="admin-btn primary" type="button">ATIVAR NESTE DISPOSITIVO ↗</button>
+              <button id="testPush" class="admin-btn" type="button" disabled>ENVIAR NOTIFICAÇÃO DE TESTE</button>
+              <button id="disablePush" class="admin-btn danger" type="button" hidden>DESATIVAR NESTE DISPOSITIVO</button>
+            </div>
+            <p style="margin-top:16px;font-size:12px;color:#80635b">A autorização é feita uma vez por dispositivo. Para receber no computador e no celular, ative separadamente em cada um.</p>
           </div>
         </section>
 
@@ -780,6 +795,7 @@
     'use strict';
     const SUPABASE_URL = 'https://iszptjpzqicpmzkmogai.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_-m2Hd6qEp76A2LMQwnJrPw_yAH44AVM';
+    const VAPID_PUBLIC_KEY = 'BIvw9A6E9_EtHmBLFrMJ6SvhHKtVb-OKDGahIbMhjjgW16IBsmLPVrcKXfHZ3CjNsm3FLBcWXeblVSn5c44l1AA';
     const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     const $ = (s, root=document) => root.querySelector(s);
     const $$ = (s, root=document) => [...root.querySelectorAll(s)];
@@ -842,7 +858,105 @@
       $('#loginArea').hidden=true;$('#panelArea').hidden=false;$('#logoutBtn').hidden=false;$('#loggedEmail').textContent=`${currentAdmin.nome||currentUser.email||'Usuário'} · ${roleLabels[currentAdmin.perfil]||currentAdmin.perfil}`;
       applyPermissions();
       await loadBase();
+      await refreshPushStatus();
     }
+
+    function setPushStatus(text, isError=false){
+      const el=$('#pushStatus');
+      if(!el)return;
+      el.textContent=text;
+      el.classList.toggle('error',Boolean(isError));
+    }
+    function urlBase64ToUint8Array(value){
+      const padding='='.repeat((4-value.length%4)%4);
+      const base64=(value+padding).replace(/-/g,'+').replace(/_/g,'/');
+      const raw=atob(base64);
+      return Uint8Array.from(raw,c=>c.charCodeAt(0));
+    }
+    async function refreshPushStatus(){
+      const enable=$('#enablePush'),test=$('#testPush'),disable=$('#disablePush');
+      if(!enable||!test||!disable)return;
+      enable.disabled=false;test.disabled=true;disable.hidden=true;
+      if(!('serviceWorker' in navigator)||!('PushManager' in window)||!('Notification' in window)){
+        setPushStatus('Este navegador ou dispositivo não oferece suporte a notificações Push.');
+        enable.disabled=true;return;
+      }
+      if(Notification.permission==='denied'){
+        setPushStatus('As notificações estão bloqueadas nas configurações do navegador. Libere a permissão do site para ativar.',true);
+        enable.disabled=true;return;
+      }
+      try{
+        const registration=await navigator.serviceWorker.ready;
+        const subscription=await registration.pushManager.getSubscription();
+        if(!subscription){
+          setPushStatus(Notification.permission==='granted'?'Permissão concedida. Ative para registrar este dispositivo.':'Notificações ainda não ativadas neste dispositivo.');
+          enable.hidden=false;enable.textContent='ATIVAR NESTE DISPOSITIVO ↗';
+          return;
+        }
+        const {data,error}=await sb.from('unhas_simone_push_subscriptions').select('id').eq('user_id',currentUser.id).eq('endpoint',subscription.endpoint).maybeSingle();
+        if(error)throw error;
+        if(!data){
+          setPushStatus('Há uma assinatura neste navegador, mas ela ainda não foi vinculada ao painel. Clique para concluir a ativação.');
+          enable.hidden=false;enable.textContent='CONCLUIR ATIVAÇÃO ↗';
+          return;
+        }
+        setPushStatus('Notificações ativadas neste dispositivo. Você receberá novos agendamentos, cancelamentos e alterações.');
+        enable.hidden=true;test.disabled=false;disable.hidden=false;
+      }catch(error){
+        setPushStatus('Não foi possível consultar a configuração Push. Confira se o SQL de notificações já foi executado no Supabase. '+(error.message||''),true);
+        enable.hidden=false;enable.disabled=false;enable.textContent='TENTAR ATIVAR NOVAMENTE';
+      }
+    }
+    $('#enablePush').addEventListener('click',async()=>{
+      const button=$('#enablePush');button.disabled=true;button.textContent='ATIVANDO...';
+      try{
+        if(!('serviceWorker' in navigator)||!('PushManager' in window)||!('Notification' in window))throw new Error('Este dispositivo não oferece suporte a notificações Push.');
+        const permission=await Notification.requestPermission();
+        if(permission!=='granted')throw new Error('A permissão não foi concedida. Autorize as notificações do site no navegador.');
+        const registration=await navigator.serviceWorker.ready;
+        let subscription=await registration.pushManager.getSubscription();
+        if(!subscription){
+          subscription=await registration.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlBase64ToUint8Array(VAPID_PUBLIC_KEY)});
+        }
+        const value=subscription.toJSON();
+        if(!value.endpoint||!value.keys?.p256dh||!value.keys?.auth)throw new Error('O navegador não retornou os dados necessários da assinatura.');
+        const {error}=await sb.from('unhas_simone_push_subscriptions').upsert({
+          user_id:currentUser.id,endpoint:value.endpoint,p256dh:value.keys.p256dh,auth:value.keys.auth,active:true,updated_at:new Date().toISOString()
+        },{onConflict:'user_id,endpoint'});
+        if(error)throw error;
+        setPushStatus('Notificações ativadas neste dispositivo.');
+        await refreshPushStatus();
+      }catch(error){
+        setPushStatus(error.message||'Não foi possível ativar as notificações.',true);
+        button.disabled=false;button.textContent='TENTAR ATIVAR NOVAMENTE';
+      }
+    });
+    $('#testPush').addEventListener('click',async()=>{
+      const button=$('#testPush');button.disabled=true;button.textContent='ENVIANDO...';
+      try{
+        const {data,error}=await sb.functions.invoke('send-push',{body:{action:'test'}});
+        if(error)throw error;
+        if(!data?.ok)throw new Error(data?.error||'A função não confirmou o envio.');
+        if(Number(data?.sent||0)<1)throw new Error(data?.message||'Nenhuma notificação foi entregue. Confira a assinatura e os Secrets.');
+        setPushStatus('Solicitação de teste enviada. Confira a notificação neste dispositivo.');
+      }catch(error){setPushStatus('Falha no teste: '+(error.message||'verifique a Edge Function e os Secrets.'),true);}
+      finally{button.disabled=false;button.textContent='ENVIAR NOTIFICAÇÃO DE TESTE';}
+    });
+    $('#disablePush').addEventListener('click',async()=>{
+      const button=$('#disablePush');button.disabled=true;
+      try{
+        const registration=await navigator.serviceWorker.ready;
+        const subscription=await registration.pushManager.getSubscription();
+        if(subscription){
+          const {error}=await sb.from('unhas_simone_push_subscriptions').delete().eq('user_id',currentUser.id).eq('endpoint',subscription.endpoint);
+          if(error)throw error;
+          await subscription.unsubscribe();
+        }
+        setPushStatus('Notificações desativadas neste dispositivo.');
+        await refreshPushStatus();
+      }catch(error){setPushStatus('Não foi possível desativar: '+(error.message||''),true);button.disabled=false;}
+    });
+
     $('#loginForm').addEventListener('submit',async e=>{
       e.preventDefault();message('loginMessage','Verificando acesso...');
       const {error}=await sb.auth.signInWithPassword({email:$('#email').value.trim(),password:$('#password').value});

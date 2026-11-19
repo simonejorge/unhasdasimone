@@ -1,4 +1,4 @@
-const CACHE_NAME = 'unhas-da-simone-v6-google-live-freebusy';
+const CACHE_NAME = 'unhas-da-simone-v6-push';
 const CORE = [
   './',
   './index.html',
@@ -26,6 +26,36 @@ self.addEventListener('activate', event => {
   event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key)))));
   self.clients.claim();
 });
+
+self.addEventListener('push', event => {
+  let payload = {};
+  try { payload = event.data ? event.data.json() : {}; }
+  catch (_) { payload = { body: event.data ? event.data.text() : '' }; }
+  const title = payload.title || 'Unhas da Simone';
+  const options = {
+    body: payload.body || 'Você tem uma atualização na agenda.',
+    icon: './assets/app-icon-192.png',
+    badge: './assets/favicon-32.png',
+    tag: payload.tag || 'unhas-da-simone-agenda',
+    renotify: true,
+    data: { url: payload.url || './admin.html' }
+  };
+  event.waitUntil(self.registration.showNotification(title, options));
+});
+self.addEventListener('notificationclick', event => {
+  event.notification.close();
+  const target = new URL(event.notification.data?.url || './admin.html', self.registration.scope).href;
+  event.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
+    for (const client of list) {
+      if (client.url.startsWith(self.registration.scope) && 'focus' in client) {
+        client.navigate(target);
+        return client.focus();
+      }
+    }
+    return self.clients.openWindow(target);
+  }));
+});
+
 self.addEventListener('fetch', event => {
   const request = event.request;
   if (request.method !== 'GET' || new URL(request.url).origin !== self.location.origin) return;
