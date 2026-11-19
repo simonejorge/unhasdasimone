@@ -7,10 +7,10 @@
   <meta name="theme-color" content="#ebc4b0">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="Unhas da Simone">
+  <meta name="apple-mobile-web-app-title" content="Painel Simone">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Painel administrativo | Unhas da Simone</title>
-  <link rel="manifest" href="./assets/manifest.webmanifest">
+  <link rel="manifest" href="./assets/admin-manifest.webmanifest">
   <link rel="icon" type="image/png" sizes="192x192" href="./assets/app-icon-192.png">
   <link rel="apple-touch-icon" href="./assets/apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -877,8 +877,22 @@
       const enable=$('#enablePush'),test=$('#testPush'),disable=$('#disablePush');
       if(!enable||!test||!disable)return;
       enable.disabled=false;test.disabled=true;disable.hidden=true;
-      if(!('serviceWorker' in navigator)||!('PushManager' in window)||!('Notification' in window)){
-        setPushStatus('Este navegador ou dispositivo não oferece suporte a notificações Push.');
+      const isiPhoneOuIPad=/iPhone|iPad|iPod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+      const instalado=window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+      if(isiPhoneOuIPad&&!instalado){
+        setPushStatus('No iPhone ou iPad, abra o painel pelo ícone instalado na Tela de Início. Notificações Push não podem ser ativadas nesta aba do navegador.');
+        enable.disabled=true;return;
+      }
+      if(!window.isSecureContext){
+        setPushStatus('As notificações exigem uma conexão HTTPS. Abra o painel pelo endereço seguro do site.',true);
+        enable.disabled=true;return;
+      }
+      if(!('serviceWorker' in navigator)){
+        setPushStatus('O Service Worker está indisponível neste navegador ou modo de navegação. Abra o painel no Chrome atualizado, fora do modo privado.',true);
+        enable.disabled=true;return;
+      }
+      if(!('PushManager' in window)||!('Notification' in window)){
+        setPushStatus('A API de notificações está indisponível neste navegador ou contexto. No Android, abra pelo Chrome atualizado; no computador, confira as configurações e permissões do Chrome.',true);
         enable.disabled=true;return;
       }
       if(Notification.permission==='denied'){
